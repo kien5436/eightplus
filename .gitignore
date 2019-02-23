@@ -1,7 +1,7 @@
 /node_modules
 .env
-/upload
-/upload/image/
-/upload/sound/
-/upload/others/
+/upload/*
+/upload/image/*
+/upload/sound/*
+/upload/others/*
 !plucky.mp3
