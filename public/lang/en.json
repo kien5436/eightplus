@@ -1,0 +1,39 @@
+{
+	"login": {
+		"title": "Login",
+		"placeholderPassword": "Password",
+		"forgotText": "Forgot password?",
+		"submitText": "Let me in",
+		"registerText": "Register"
+	},
+	"register": {
+		"title": "Register",
+		"placeholderEmail": "Email",
+		"placeholderUsername": "Nickname",
+		"submitText": "Go",
+		"loginText": "Login"
+	},
+	"chat": {
+		"placeholderEditor": "Type a message...",
+		"titleEmoji": "Select an emoji",
+		"titleSend": "Send message",
+		"statusOn": "Active now",
+		"statusOff": "Offline",
+		"contactTitle": "Who is online",
+		"logout": "Logout",
+		"changeBg": "Change background",
+		"titleAttach": "Add files",
+		"hall": "Hall"
+	},
+	"error": {
+		"existedUser": "This email has already existed!",
+		"unexistedUser": "This account does not exists",
+		"password unmatch": "Incorrect password",
+		"empty message": "Please enter some messages",
+		"empty email": "Please enter an email",
+		"empty username": "Please enter a nickname",
+		"empty password": "Please enter a password",
+		"invalid email": "Please enter a valid email",
+		"invalid password": "Password must be greater than 6 characters"
+	}
+}

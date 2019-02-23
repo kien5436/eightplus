@@ -1,0 +1,62 @@
+doctype html
+html
+	head
+		meta(charset='utf-8')
+		title 8+
+		link(href='/asset/css/index.css' rel='stylesheet')
+	body
+		.contact
+			.contact_header
+				.contact_header-setting
+					i.fa.fa-cog.fa-white
+					ul.setting.hidden
+						li.setting-item
+							a(href='/logout')=logout
+						li.setting-item.changeBg=changeBg
+				.contact_header-title=contactTitle
+			ul.contact_body
+				li.user
+					a(href='/t/hall')
+						span.user-name=hall
+						span.user-status.active
+				each user in users
+					li.user
+						a(href='/t/' + user._id)
+							span.user-name=user.username
+							span.user-status(class=(user.status === 0 ? '' : 'active'))
+			
+		.chat
+			.chat_content
+				.chat_content-header
+					.user_info
+						.user_info-name=chatWith.username
+						.user_info-status
+							span.user-status.active
+							=statusOn
+					.action
+						.action_info
+							i.fa.fa-ellipsis-v.fa-white#action_info-icon
+							ul.action_info-menu.hidden
+								li.action_info-menu-item ヽ（・＿・)ノ nothing here
+				ul.chat_content-body#messages
+			.chat_footer
+				input#rid(type='hidden' value=rid)
+				.input
+					textarea#editor(placeholder=placeholderEditor autofocus)
+				.xtra_input
+					.xtra_input-icons
+						i.fa.fa-smile.fa-white#btn-emoji(title=titleEmoji)
+						.icons.hidden
+							.icons-palette
+								- for (let i = 0; i < icons.length; i++)
+									i.fa.fa-white(class=`fa-${ icons[i] }` data-ic=icons[i])
+					.xtra_input-file
+						label.fa.fa-paperclip.fa-white(title=titleAttach for='attachment')
+						input(type='file' id='attachment' multiple)
+					.xtra_input-send
+						i.fa.fa-send.fa-white#btn-send(title=titleSend)
+		
+		audio#bell
+			source(src='/file/sound/plucky.mp3' type='audio/mpeg')
+		script(async src='/socket.io/socket.io.js')
+		script(async src='/asset/js/chat.min.js')

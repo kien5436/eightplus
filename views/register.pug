@@ -1,0 +1,24 @@
+doctype html
+html
+	head
+		meta(charset='utf-8')
+		title 8+ #{ title }
+		link(rel='stylesheet' href='/asset/css/login.css')
+	body
+		form(action='/register' method='post' class='form')
+			
+			input(name='email' class='btn' type='text' value=email placeholder=placeholderEmail autofocus)
+			if (error !== null && error.email !== undefined)
+				p.form-error=error.email
+
+			input(name='nickname' class='btn' type='text' value=username placeholder=placeholderUsername)
+			if (error !== null && error.username !== undefined)
+				p.form-error=error.username
+
+			input(name='password' class='btn' type='password' placeholder=placeholderPassword)
+			if (error !== null && error.password !== undefined)
+				p.form-error=error.password
+				
+			input(class='btn' type='submit' value=submitText)
+			a(href='/login')=loginText
+		script(async src='/asset/js/login.min.js')

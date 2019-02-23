@@ -1,0 +1,48 @@
+%clearfix {
+	clear: both;
+	content: '';
+	display: block
+}
+
+%col {
+	float: left;
+	padding: 0 1em;
+}
+
+%scrollbar {
+	overflow: auto;
+	scrollbar-width: thin;
+	scrollbar-color: rgba(#000, .3) rgba(#fff, .1);
+	&::-webkit-scrollbar {
+		max-height: 6px;
+		max-width: 6px;
+	}
+	&::-webkit-scrollbar-thumb {
+		background: rgba(#000, .3);
+	}
+	&::-webkit-scrollbar-track {
+		background: rgba(#fff, .1);
+	}
+}
+
+%palette {
+	background: rgba(#000, .8);
+	border-radius: .3em;
+	height: 15em;
+	padding: 1em;
+	position: absolute;
+	right: 1.2em; top: -16em;
+	width: 42em;
+	z-index: 99;
+}
+
+$col: ();
+@for $i from 1 through 12 {
+	$col: append($col, $i * 100%/12);
+}
+
+$break-points: (
+	phone: '(min-width: 320px)',
+	tablet: '(min-width: 720px)',
+	desktop: '(min-width: 1024px)'
+	);

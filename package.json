@@ -1,0 +1,30 @@
+{
+  "name": "eightplus",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "npx nodemon"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/kiendp/eightplus.git"
+  },
+  "author": "Pham Trung Kien",
+  "license": "MIT",
+  "homepage": "https://bitbucket.org/kiendp/eightplus",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.16.4",
+    "formidable": "^1.2.1",
+    "mongodb": "^3.1.13",
+    "pug": "^2.0.3",
+    "socket.io": "^2.2.0"
+  },
+  "devDependencies": {
+    "dotenv": "^6.2.0",
+    "nodemon": "^1.18.9"
+  }
+}
