@@ -22,6 +22,7 @@ window.addEventListener('load', function() {
 	socket.on('connect', () => socket.emit('join', rid));
 
 	editor.addEventListener('keypress', e => {
+
 		if (e.keyCode === 13 && !e.shiftKey) {
 			e.preventDefault();
 			sendMsg(socket);
@@ -29,7 +30,39 @@ window.addEventListener('load', function() {
 	});
 	btnSend.addEventListener('click', () => sendMsg(socket) );
 
+	socket.on('_typing', data => {
+
+		let typing = 
+		`<li class="message" id="typing">
+		<div class="message-wrapper"> 
+		<div class="dot-wrapper">
+		<div class="dot-hint">${ data.username } is typing...</div>
+		<div class="dot dot-1"></div><div class="dot dot-2"></div><div class="dot dot-3"></div>
+		</div>
+		</div>
+		</li>`,
+		msgTyping = document.getElementById('typing');
+
+		if (data.typing && !msgTyping) {
+
+			messages.innerHTML += typing;
+			msgTyping = document.getElementById('typing');
+			msgTyping.scrollIntoView({ block: 'end', inline: 'end' });
+		}
+		else if (!data.typing && msgTyping) msgTyping.remove();
+	});
+
 	socket.on('new message', data => newMessage(data) );
+
+	editor.addEventListener('keyup', function() {
+
+		setTimeout(() => {
+			socket.emit('typing', {
+				uid: getCookie('uid'),
+				typing: this.value !== ''
+			});
+		}, 700);
+	});
 
 	messages.addEventListener('scroll', function() {
 		if (this.scrollTop === 0 && lastMsg > -1) {
@@ -50,6 +83,7 @@ window.addEventListener('load', function() {
 
 	/* insert emoji */
 	iconPalette.addEventListener('click', e => {
+
 		let icon = e.target.getAttribute('data-ic');
 		if (icon !== null) {
 			let start = editor.selectionStart, end = editor.selectionEnd, txt = editor.value;
@@ -60,6 +94,7 @@ window.addEventListener('load', function() {
 	});
 
 	attachment.addEventListener('change', e => {
+
 		const files = e.target.files;
 		let preview = document.getElementsByClassName('preview');
 
@@ -93,6 +128,7 @@ window.addEventListener('load', function() {
 	});
 
 	document.addEventListener('click', e => {
+
 		const target = e.target;
 
 		if (target.matches('.preview_file-close')) {
@@ -231,8 +267,10 @@ function newMessage(data, old = 0) {
 }
 
 function sendMsg(socket) {
+
 	upload()
 	.then((fileUploaded) => {
+
 		const message = {
 			text: editor.value.trim().replace(/\r\n/g, '\n'),
 			file: fileUploaded
@@ -240,6 +278,7 @@ function sendMsg(socket) {
 		editor.value = '';
 
 		socket.emit('send message', {
+
 			msg: JSON.stringify(message),
 			senderId: getCookie('uid'),
 			created: Date.now()

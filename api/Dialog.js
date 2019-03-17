@@ -37,8 +37,8 @@ function Dialog(db) {
 			else {
 				form._error(new Error('Some files type are not allowed'));
 			}
-		});
-		form.on('file', (name, file) => {
+		})
+		.on('file', (name, file) => {
 			
 			if (file.size === 0) {
 				fs.unlink(file.path, (err) => {
@@ -53,8 +53,8 @@ function Dialog(db) {
 				path: file.path.slice(7),
 				name: file.name
 			});
-		});
-		form.on('error', err => {
+		})
+		.on('error', err => {
 			console.log( err.message);
 			// rewrite error message, so dirty
 			if (err.message.indexOf('maxFileSize') >= 0)
@@ -75,14 +75,39 @@ function Dialog(db) {
 	};
 
 	this.transfer = function(io, socket) {
+
+		const regexCookie = /^j:"(.*)"$/;
+
+		socket.on('typing', data => {
+			
+			let uid = data.uid.match(regexCookie);
+			if (uid !== null) {
+
+				uid = uid[1];
+				user.find({ _id: new ObjectId(uid) }).project({ username: 1 })
+				.next((err, userInfo) => {
+					
+					if (err) console.error(err);
+
+					if (userInfo !== null) {
+
+						const room = Object.keys(socket.rooms)[1];
+						socket.to(room).emit('_typing', {
+							username: userInfo.username,
+							typing: data.typing
+						});
+					}
+				});
+			}
+		});
+
 		socket.on('send message', (data, callback) => {
+
 			data.msg = JSON.parse(data.msg);
-			// return console.log(typeof data, data);
 
 			if (Validation.isEmpty(data.msg.text, 'message') && Validation.isEmpty(data.msg.file, 'message'))
 				return callback(Validation.error.message);
 
-			const regexCookie = /^j:"(.*)"$/;
 			let uid = data.senderId.match(regexCookie);
 			if (uid !== null) uid = uid[1];
 			data.msg.text = Validation.xssClean(data.msg.text);
@@ -94,8 +119,6 @@ function Dialog(db) {
 
 				if (userInfo !== null) {
 
-					const room = Object.keys(socket.rooms)[1]; // room id
-
 					dialog.insertOne({
 						rid: room,
 						sender: {
@@ -105,7 +128,10 @@ function Dialog(db) {
 						msg: data.msg,
 						created: data.created
 					}, (err, result) => {
+
 						if (err) console.error(err);
+
+						const room = Object.keys(socket.rooms)[1];
 						io.in(room).emit('new message', result.ops[0]);
 					});
 				}
@@ -122,7 +148,7 @@ function Dialog(db) {
 
 		User(db).exists(req, res)
 		.then(result => {
-			if (!result) res.redirect('/login');
+			if (!result) return Promise.reject(res.redirect('/login'));
 			return listUsers();
 		})
 		.then(_users => {
@@ -149,7 +175,7 @@ function Dialog(db) {
 				users: users,
 				rid: _room.lastErrorObject.upserted || _room.value._id,
 				chatWith: chatWith,
-				placeholderEditor: lang.print('chat.placeholderEditor'),
+				phEditor: lang.print('chat.phEditor'),
 				hall: lang.print('chat.hall'),
 				titleEmoji: lang.print('chat.titleEmoji'),
 				titleAttach: lang.print('chat.titleAttach'),

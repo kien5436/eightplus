@@ -1,6 +1,7 @@
 module.exports = Room;
 
 function Room(db) {
+
 	const room = db.collection('room');
 
 	/**

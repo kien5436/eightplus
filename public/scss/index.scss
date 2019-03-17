@@ -200,6 +200,34 @@ body {
 						margin-right: 1em;
 					}
 					.fa { transform: scale(.7); margin: 0 }
+					.dot {
+						animation: dot 1s ease-in-out infinite;
+						background: #233;
+						border-radius: 50%;
+						height: 7px;
+						position: absolute;
+						width: 7px;
+						&-wrapper {
+							height: 7px;
+							position: relative;
+							width: 2.5rem;
+
+						}
+						&-2 { animation-delay: .2s; left: 1rem }
+						&-3 { animation-delay: .4s; left: 2rem }
+						&-hint { 
+							@extend %hint;
+							font-size: 1.3rem;
+							top: -5rem; left: 0;
+							width: max-content;
+						}
+						@keyframes dot {
+							0%,
+							100% {top: 3px}
+							50% {top: -3px}
+						}
+					}
+					&:hover .dot-hint { display: block }
 				}
 				&-time {
 					font-size: .7em;
@@ -315,23 +343,7 @@ body {
 			}
 
 			.error {
-				background: rgba(#000, 0.9);
-				border-radius: 5px;
-				color: #fff;
-				display: none;
-				font-size: 1.5em;
-				padding: 0.5em;
-				position: absolute;
-				top: -3em;
-				left: 1em;
-				&:after {
-					border: 1em solid transparent;
-					border-top-color: rgba(#000, 0.9);
-					content: '';
-					display: block;
-					position: absolute;
-					width: 0; height: 0;
-				}
+				@extend %hint;
 				&.show {
 					animation: show 3s ease forwards;
 					display: block;

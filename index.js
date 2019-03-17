@@ -1,4 +1,4 @@
-process.env.NODE_ENV = 'production';
+// process.env.NODE_ENV = 'production';
 if (process.env.NODE_ENV !== 'production') dotenv = require('dotenv').config();
 const express = require('express'),
 app = express(),
@@ -37,6 +37,9 @@ client.connect((err) => {
 	app.post('/login', [cookieParser, urlencodedParser], user.login, user.loadViewLogin);
 
 	app.get('/logout', cookieParser, user.logout);
+
+	app.get('/reset', user.loadViewReset);
+	app.post('/reset', urlencodedParser, user.resetPassword, user.loadViewReset);
 	
 	io.on('connection', (socket) => {
 

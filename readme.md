@@ -8,12 +8,10 @@ Learn about Node.js
 
 [![Build Status](https://img.shields.io/badge/build-developing-blue.svg)]()
 
-## Screenshots
-Include logo/demo screenshot etc.
-
 ## Technologies
 - Node.js
 - MongoDB
+- Socket.io
 
 ## Features
 [x] load old messages
@@ -22,10 +20,9 @@ Include logo/demo screenshot etc.
 [x] public chatting
 [x] login, register
 [x] icons in chats
-[ ] resolved Promise hell at loadViewDialog: improve with async/await
 [ ] notification
 [ ] users's active status
-[ ] someone is typing...
+[x] someone is typing...
 [ ] multi languages
 [x] user upload
 - images
@@ -48,7 +45,7 @@ Include logo/demo screenshot etc.
 - sometimes old messages are not loaded in the first time login
 
 ## Installation
-### Prequisites: some knowledge of Node.js and MongoDB
+### Prequisites: some knowledge about Node.js and MongoDB
 - Install [Node.js](https://nodejs.org)
 - Install [MongoDB](https://www.mongodb.com)
 - Clone or download this project then uncompress it

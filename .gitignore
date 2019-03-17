@@ -4,3 +4,4 @@
 /upload/sound/*
 /upload/others/*
 !plucky.mp3
+!.gitkeep

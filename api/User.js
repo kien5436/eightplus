@@ -1,6 +1,7 @@
 const lang = require('../public/lang/lang'),
 Validation = require('./Validation')(),
 crypto = require('crypto'),
+nodemailer = require('nodemailer'),
 ObjectId = require('mongodb').ObjectID;
 
 module.exports = User;
@@ -8,6 +9,84 @@ module.exports = User;
 function User(db) {
 
 	let user = db.collection('user'), self = this;
+
+	this.resetPassword = function(req, res, next) {
+
+		if (!req.body) return res.sendStatus(400);
+
+		let email = req.body.email.trim() || null;
+
+		if ( Validation.isEmpty(email, 'email') || !Validation.isEmail(email) ) {
+
+			req.data = {
+				email: email,
+				error: Validation.error
+			};
+			Validation.error = {};
+			return next();
+		}
+		else {
+			user.find({ email: email }).count()
+			.then(count => {
+				
+				if (count === 0) {
+
+					req.data = {
+						email: email,
+						error: { email: lang.print('error.unexistedUser') }
+					};
+					return next();
+				}
+				else {
+
+					let transporter = nodemailer.createTransport({
+						// host: 'smtp.gmail.com',
+						service: 'gmail',
+						secure: false,
+						auth: {
+							type: 'OAuth2',
+							user: 'kiendp00@gmail.com',
+							pass: '',
+							tls: {
+								rejectUnauthorized: false
+							}
+						}
+					});
+					const data = {
+						from: 'kiendp00@gmail.com',
+						to: email,
+						priority: 'high',
+						subject: 'Password reset',
+						text: `You are receiving this because you have requested the reset of the password for your account.
+						Please click on the following link, or paste this into your browser to complete the process:
+						http://${ req.headers.host + '/reset?token=' + crypto.randomBytes(10).toString('hex') }
+						If you did not request this, please ignore this email and your password will remain unchanged.`
+					};
+
+					transporter.sendMail(data, (err, info, response) => {
+						
+						if (err) console.error(err);
+
+						console.info(info, response);
+						res.sendStatus(200)
+					});
+				}
+			})
+			.catch( err => console.error(err) );
+		}
+	};
+
+	this.loadViewReset = function(req, res) {
+
+		res.render('reset', {
+			title: lang.print('reset.title'),
+			phEmail: lang.print('register.phEmail'),
+			enterEmail: lang.print('reset.enterEmail'),
+			submitText: lang.print('reset.submitText1'),
+			email: (req.data !== undefined) ? req.data.email : null,
+			error: (req.data !== undefined) ? req.data.error : null,
+		});
+	};
 
 	this.logout = function(req, res) {
 		for (cookie in req.cookies) {
@@ -17,6 +96,7 @@ function User(db) {
 	};
 
 	this.register = function(req, res, next) {
+
 		if (!req.body) return res.sendStatus(400);
 
 		let email = req.body.email.trim() || null,
@@ -30,6 +110,7 @@ function User(db) {
 			.then(result => {
 				
 				if (result === 0) {
+
 					const hashedPwd = hash(password);
 
 					user.insertOne({
@@ -75,9 +156,9 @@ function User(db) {
 
 			res.render('register', {
 				title: lang.print('register.title'),
-				placeholderEmail: lang.print('register.placeholderEmail'),
-				placeholderUsername: lang.print('register.placeholderUsername'),
-				placeholderPassword: lang.print('login.placeholderPassword'),
+				phEmail: lang.print('register.phEmail'),
+				phUsername: lang.print('register.phUsername'),
+				phPassword: lang.print('login.phPassword'),
 				submitText: lang.print('register.submitText'),
 				loginText: lang.print('register.loginText'),
 				email: (req.data !== undefined) ? req.data.email : null,
@@ -97,6 +178,7 @@ function User(db) {
 		let error = validateLogin(email, password);
 
 		if (error === null) {
+
 			user.find({ email: email }).next((err, result) => {
 				if (err) console.error(err);
 
@@ -134,8 +216,8 @@ function User(db) {
 
 			res.render('login', {
 				title: lang.print('login.title'),
-				placeholderEmail: lang.print('register.placeholderEmail'),
-				placeholderPassword: lang.print('login.placeholderPassword'),
+				phEmail: lang.print('register.phEmail'),
+				phPassword: lang.print('login.phPassword'),
 				forgotText: lang.print('login.forgotText'),
 				registerText: lang.print('login.registerText'),
 				submitText: lang.print('login.submitText'),
@@ -170,12 +252,12 @@ function User(db) {
 			|| Validation.isEmpty(username, 'username')
 			|| Validation.pwdTooShort(password)) {
 			return Validation.error;
-	}
-	return null;
+		}
+		return null;
 	}
 
-	function hash(pwd, salt = '') {
-		if (salt === '') salt = crypto.randomBytes(512).toString('base64');
+	function hash(pwd, salt = crypto.randomBytes(512).toString('base64')) {
+
 		return {
 			hashed: crypto.pbkdf2Sync(pwd, salt, 100, 64, 'sha512').toString('hex'),
 			salt: salt

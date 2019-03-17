@@ -29,6 +29,7 @@ html, body {
 		color: #fff;
 		margin-bottom: 1em;
 		width: 80%;
+		&:not([type=submit]) { cursor: unset }
 		&[type=submit] {
 			font-weight: 700;
 			text-transform: uppercase;
@@ -53,12 +54,15 @@ html, body {
 		font-size: 1.5em;
 		&:hover { text-decoration: underline }
 	}
+	.p,
 	&-error {
 		color: #fff;
 		font-size: 1.2em;
 		align-self: flex-start;
-		margin: -.5em 0 1em 10%;	
+		margin: -.5em 0 1em 10%;
+		width: 80%;
 	}
+	.p { font-size: 1.5em }
 	@media #{ map-get($break-points, phone) } {
 		width: 80%;
 	}

@@ -1,0 +1,27 @@
+extends layout.pug
+
+block css
+	link(rel='stylesheet' href='/asset/css/login.css')
+
+prepend js
+	script(async src='/asset/js/login.min.js')
+
+block content
+	form(action='/reset' method='post' class='form')
+		
+		//- if (window.location.search === '')
+		p.p= enterEmail
+
+		input(name='email' class='btn' type='text' value=email placeholder=phEmail autofocus)
+		if (error !== null && error.email !== undefined)
+			p.form-error=error.email
+		//- else
+			// input(name='token' type='hidden' value='')
+			// input(name='password' class='btn' type='password' placeholder=phPassword autofocus)
+			// if (error !== null && error.password !== undefined)
+			// 	p.form-error=error.password
+			// input(name='password-confirm' class='btn' type='password' placeholder=phPasswordConfirm)
+			// if (error !== null && error.password !== undefined)
+			// 	p.form-error=error.password
+
+		input(class='btn' type='submit' value=submitText)

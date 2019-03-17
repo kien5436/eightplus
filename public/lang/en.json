@@ -1,20 +1,26 @@
 {
+	"reset": {
+		"title": "Reset password",
+		"enterEmail": "Enter your email address and we will send you a link to reset your password",
+		"submitText1": "Reset",
+		"submitText2": "Send email"
+	},
 	"login": {
 		"title": "Login",
-		"placeholderPassword": "Password",
+		"phPassword": "Password",
 		"forgotText": "Forgot password?",
 		"submitText": "Let me in",
 		"registerText": "Register"
 	},
 	"register": {
 		"title": "Register",
-		"placeholderEmail": "Email",
-		"placeholderUsername": "Nickname",
+		"phEmail": "Email",
+		"phUsername": "Nickname",
 		"submitText": "Go",
 		"loginText": "Login"
 	},
 	"chat": {
-		"placeholderEditor": "Type a message...",
+		"phEditor": "Type a message...",
 		"titleEmoji": "Select an emoji",
 		"titleSend": "Send message",
 		"statusOn": "Active now",
