@@ -14,27 +14,27 @@ Learn about Node.js
 - Socket.io
 
 ## Features
-[x] load old messages
-[x] autoscroll to newest message
-[x] private chatting
-[x] public chatting
-[x] login, register
-[x] icons in chats
-[ ] notification
-[ ] users's active status
-[x] someone is typing...
-[ ] multi languages
-[x] user upload
+- [x] load old messages
+- [x] autoscroll to newest message
+- [x] private chatting
+- [x] public chatting
+- [x] login, register
+- [x] icons in chats
+- [ ] notification
+- [ ] users's active status
+- [x] someone is typing...
+- [ ] multi languages
+- [x] user upload
 - images
 - sounds
 
-[x] forgot password
-[ ] user management
+- [x] forgot password
+- [ ] user management
 - block
 - group chat
 - delete messages
 
-[ ] video call, sound call (I think I will never do this)
+- [ ] video call, sound call (I think I will never do this)
 
 #### What news
 - improve scroll to load messages experience and performance
