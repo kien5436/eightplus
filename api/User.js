@@ -8,83 +8,82 @@ module.exports = User;
 
 function User(db) {
 
-	let user = db.collection('user'), self = this;
+	let user = db.collection('user'), self = this, userReset = {};
 
 	this.resetPassword = function(req, res, next) {
 
 		if (!req.body) return res.sendStatus(400);
 
-		let email = req.body.email.trim() || null;
+		if (req.body._method === 'PUT') {
 
-		if ( Validation.isEmpty(email, 'email') || !Validation.isEmail(email) ) {
+			if ( Validation.isEmpty(req.body.newPassword, 'password') || Validation.pwdTooShort(req.body.newPassword) || !Validation.samePwd(req.body.newPassword, req.body.passwordConfirmation) ) {
 
-			req.data = {
-				email: email,
-				error: Validation.error
-			};
-			Validation.error = {};
-			return next();
+				req.data = { error: Validation.error };
+				return next();
+			}
+			else if (userReset.resetToken !== req.body.resetToken || req.body.authToken !== req.session.authToken) {
+
+				req.data = { error: { token: lang.print('error.session expired') } };
+				return next();
+			}
+
+			doReset(req, res);
 		}
-		else {
-			user.find({ email: email }).count()
-			.then(count => {
-				
-				if (count === 0) {
+		else if (req.method === 'POST') {
 
-					req.data = {
-						email: email,
-						error: { email: lang.print('error.unexistedUser') }
-					};
-					return next();
+			let email = req.body.email.trim() || null;
+
+			if ( Validation.isEmpty(email, 'email') || !Validation.isEmail(email) ) {
+
+				req.data = {
+					email: email,
+					error: Validation.error
 				}
-				else {
+				Validation.error = {};
+				return next();
+			}
 
-					let transporter = nodemailer.createTransport({
-						// host: 'smtp.gmail.com',
-						service: 'gmail',
-						secure: false,
-						auth: {
-							type: 'OAuth2',
-							user: 'kiendp00@gmail.com',
-							pass: '',
-							tls: {
-								rejectUnauthorized: false
-							}
-						}
-					});
-					const data = {
-						from: 'kiendp00@gmail.com',
-						to: email,
-						priority: 'high',
-						subject: 'Password reset',
-						text: `You are receiving this because you have requested the reset of the password for your account.
-						Please click on the following link, or paste this into your browser to complete the process:
-						http://${ req.headers.host + '/reset?token=' + crypto.randomBytes(10).toString('hex') }
-						If you did not request this, please ignore this email and your password will remain unchanged.`
-					};
-
-					transporter.sendMail(data, (err, info, response) => {
-						
-						if (err) console.error(err);
-
-						console.info(info, response);
-						res.sendStatus(200)
-					});
-				}
-			})
-			.catch( err => console.error(err) );
+			sendResetLink(email, req, next);
 		}
 	};
 
 	this.loadViewReset = function(req, res) {
 
+		let email, error, type = 'text', submitText = 'reset.submitTextSend', guideline = 'reset.guidelineEnter';
+
+		if (req.session.authToken === undefined) {
+
+			req.session.authToken = crypto.randomBytes(20).toString('base64');
+		}
+
+		if (req.data !== undefined) {
+
+			email = req.data.email;
+			error = req.data.error;
+
+			if (req.data.sent) {
+
+				type = 'hidden';
+				submitText = 'reset.submitTextResend';
+				guideline = 'reset.guidelineResend';
+			}
+		}
+
+		if (Object.keys(req.query).length > 0)
+			submitText = 'reset.submitTextReset';
+
 		res.render('reset', {
 			title: lang.print('reset.title'),
 			phEmail: lang.print('register.phEmail'),
-			enterEmail: lang.print('reset.enterEmail'),
-			submitText: lang.print('reset.submitText1'),
-			email: (req.data !== undefined) ? req.data.email : null,
-			error: (req.data !== undefined) ? req.data.error : null,
+			phPassword: lang.print('reset.phPassword'),
+			phPasswordConfirm: lang.print('reset.phPasswordConfirm'),
+			guideline: lang.print(guideline),
+			submitText: lang.print(submitText),
+			email: email,
+			type: type,
+			error: error,
+			resetToken: req.query.token || null,
+			authToken: req.session.authToken || null
 		});
 	};
 
@@ -238,6 +237,76 @@ function User(db) {
 			});
 		});
 	};
+
+	function doReset(req, res) {
+		
+		const hashedPwd = hash(req.body.newPassword);
+
+		user.updateOne({ email: userReset.email }, {
+			$set: {
+				pwd: hashedPwd.hashed,
+				salt: hashedPwd.salt
+			}
+		}, (err, result) => {
+
+			if (err) console.error(err);
+			req.session.destroy( err => console.error(err) );
+			res.redirect('/login');
+		});
+	}
+
+	function sendResetLink(email, req, next) {
+
+		user.find({ email: email }).count()
+		.then(count => {
+
+			if (count === 0) {
+
+				req.data = {
+					email: email,
+					error: { email: lang.print('error.unexistedUser') }
+				};
+			}
+			else {
+				userReset.email = email;
+				userReset.resetToken = crypto.randomBytes(10).toString('hex');
+				req.data = {
+					sent: true,
+					email: email
+				};
+
+				let transporter = nodemailer.createTransport({
+					host: 'smtp.gmail.com',
+					service: 'gmail',
+					secure: process.env.GMAIL_SECURE,
+					auth: {
+						type: 'OAuth2',
+						scope: 'https://mail.google.com/',
+						user: 'kiendp00@gmail.com',
+						clientId: process.env.GMAIL_CLIENT_ID,
+						clientSecret: process.env.GMAIL_CLIENT_SECRET,
+						accessToken: process.env.GMAIL_ACCESS_TOKEN,
+						refreshToken: process.env.GMAIL_REFRESH_TOKEN
+					}
+				});
+				const data = {
+					from: 'admin@eightplus.herokuapp.com <no-reply@eightplus.herokuapp.com>',
+					sender: 'admin@eightplus.herokuapp.com',
+					to: email,
+					priority: 'high',
+					subject: 'Password reset',
+					text: `You are receiving this because you have requested the reset of the password for your account.\nPlease click on the following link, or paste this into your browser to complete the process:\n						http://${ req.headers.host + '/reset?token=' + userReset.resetToken }\nIf you did not request this, please ignore this email and your password will remain unchanged.`
+				};
+
+				transporter.sendMail(data, (err) => {
+					
+					if (err) console.error(err);
+				});
+			}
+			return next();
+		})
+		.catch( err => console.error(err) );
+	}
 
 	function validateLogin(email, password) {
 		if (Validation.isEmpty(email, 'email') || !Validation.isEmail(email)

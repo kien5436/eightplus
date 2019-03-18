@@ -7,21 +7,25 @@ prepend js
 	script(async src='/asset/js/login.min.js')
 
 block content
-	form(action='/reset' method='post' class='form')
+	form(action='' method='post' class='form')
 		
-		//- if (window.location.search === '')
-		p.p= enterEmail
+		if (resetToken === null)
+			p.p!= guideline
 
-		input(name='email' class='btn' type='text' value=email placeholder=phEmail autofocus)
-		if (error !== null && error.email !== undefined)
-			p.form-error=error.email
-		//- else
-			// input(name='token' type='hidden' value='')
-			// input(name='password' class='btn' type='password' placeholder=phPassword autofocus)
-			// if (error !== null && error.password !== undefined)
-			// 	p.form-error=error.password
-			// input(name='password-confirm' class='btn' type='password' placeholder=phPasswordConfirm)
-			// if (error !== null && error.password !== undefined)
-			// 	p.form-error=error.password
+			input(name='email' class='btn' type=type value=email placeholder=phEmail autofocus)
+			if (error && error.email)
+				p.form-error=error.email
+		else
+			if (error && error.token)
+				p.form-error!=error.token
+			input(name='_method' type='hidden' value='PUT')
+			input(name='authToken' type='hidden' value=authToken)
+			input(name='resetToken' type='hidden' value=resetToken)
+			input(name='newPassword' class='btn' type='password' placeholder=phPassword autofocus)
+			if (error && error.password)
+				p.form-error=error.password
+			input(name='passwordConfirmation' class='btn' type='password' placeholder=phPasswordConfirm)
+			if (error && error.password)
+				p.form-error=error.password
 
 		input(class='btn' type='submit' value=submitText)

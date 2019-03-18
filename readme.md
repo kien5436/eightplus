@@ -28,7 +28,7 @@ Learn about Node.js
 - images
 - sounds
 
-[ ] forgot password
+[x] forgot password
 [ ] user management
 - block
 - group chat

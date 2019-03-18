@@ -1,9 +1,13 @@
 {
 	"reset": {
 		"title": "Reset password",
-		"enterEmail": "Enter your email address and we will send you a link to reset your password",
-		"submitText1": "Reset",
-		"submitText2": "Send email"
+		"guidelineEnter": "Enter your email address and we will send you a link to reset your password",
+		"guidelineResend": "Check your email and follow the link was sent to reset your password.<br>If you can't find our email, please send another one after 5 minutes.",
+		"submitTextReset": "Reset",
+		"submitTextSend": "Send email",
+		"submitTextResend": "Send another email",
+		"phPassword": "New password",
+		"phPasswordConfirm": "Confirm new password"
 	},
 	"login": {
 		"title": "Login",
@@ -40,6 +44,8 @@
 		"empty username": "Please enter a nickname",
 		"empty password": "Please enter a password",
 		"invalid email": "Please enter a valid email",
-		"invalid password": "Password must be greater than 6 characters"
+		"invalid password": "Password must be greater than 6 characters",
+		"not same password": "Password confirmation doesn't match password",
+		"session expired": "Your session has been expired. <a href='/reset'>Resend another link</a>"
 	}
 }

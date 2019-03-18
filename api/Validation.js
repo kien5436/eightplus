@@ -7,12 +7,14 @@ function Validation() {
 	this.error = {};
 
 	this.allowedFile = function(filename) {
+
 		const disallowed = ['rar', 'zip', 'exe', 'php', 'js', 'htm', 'html', 'bat', 'vbs'],
 		ext = /\.(\w+)$/i;
 		return (filename.match(ext) !== null) && (disallowed.indexOf(filename.match(ext)[1].toLowerCase()) < 0);
 	};
 
 	this.isEmail = function(email) {
+
 		const regexEmail = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
 
 		if ( !regexEmail.test(email) ) {
@@ -23,6 +25,7 @@ function Validation() {
 	};
 
 	this.isEmpty = function(o, type) {
+
 		if ( o === null || (Array.isArray(o) && o.length === 0) || (typeof o === 'string' && o.trim() === '') || (typeof o === 'object' && Object.keys(o).length === 0) ) {
 			this.error[type] = lang.print(`error.empty ${type}`);
 			return true;
@@ -31,6 +34,7 @@ function Validation() {
 	};
 
 	this.pwdTooShort = function(pwd) {
+
 		if (pwd === null || pwd.length < 6) {
 			this.error.password = lang.print('error.invalid password');
 			return true;
@@ -38,7 +42,17 @@ function Validation() {
 		return false;
 	};
 
+	this.samePwd = function(pwd1, pwd2) {
+
+		if (pwd1 !== pwd2) {
+			this.error.password = lang.print('error.not same password');
+			return false;
+		}
+		return true;
+	}
+
 	this.xssClean = function(val) {
+
 		const regexSanitize = /[><\n]/g;
 
 		return val.trim().replace(regexSanitize, char => ({

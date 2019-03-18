@@ -6,6 +6,7 @@ http = require('http').Server(app),
 io = require('socket.io')(http).sockets,
 bodyParser = require('body-parser'),
 cookieParser = require('cookie-parser')(),
+session = require('express-session'),
 MongoClient = require('mongodb').MongoClient,
 User = require('./api/User'),
 Dialog = require('./api/Dialog');
@@ -14,6 +15,15 @@ const client = new MongoClient(process.env.DB_URL, { useNewUrlParser: true }),
 urlencodedParser = bodyParser.urlencoded({ extended: false }),
 jsonParser = bodyParser.json();
 
+app.use(session({
+	secret: process.env.SS_SECRET,
+	resave: false,
+	saveUninitialized: true,
+	cookie: {
+		secure: false,
+		maxAge: parseInt(process.env.SS_MAXAGE)
+	}
+}));
 app.use('/asset', express.static('public'));
 app.use('/file', express.static('upload'));
 app.set('view engine', 'pug');

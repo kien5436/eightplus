@@ -61,6 +61,7 @@ html, body {
 		align-self: flex-start;
 		margin: -.5em 0 1em 10%;
 		width: 80%;
+		a { font-size: inherit }
 	}
 	.p { font-size: 1.5em }
 	@media #{ map-get($break-points, phone) } {
