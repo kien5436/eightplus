@@ -4,6 +4,8 @@ html
 		meta(charset='utf-8')
 		title 8+ #{ title }
 		block css
+			link(rel='preload' href='/asset/fonts/Nunito/Nunito-400.woff2' as='font' type='font/woff2')
+			link(rel='preload' href='/asset/fonts/Nunito/Nunito-700.woff2' as='font' type='font/woff2')
 	body
 		block content
 		block js

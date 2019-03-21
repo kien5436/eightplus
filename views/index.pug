@@ -1,6 +1,8 @@
 extends layout.pug
 
-block css
+prepend css
+	link(rel='preload' href='/asset/css/index.css' as='style')
+	link(rel='preload' href='/socket.io/socket.io.js' as='script')
 	link(rel='stylesheet' href='/asset/css/index.css')
 
 prepend js

@@ -1,6 +1,7 @@
 extends layout.pug
 
-block css
+prepend css
+	link(rel='preload' href='/asset/css/login.css' as='style')
 	link(rel='stylesheet' href='/asset/css/login.css')
 
 prepend js
