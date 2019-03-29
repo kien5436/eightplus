@@ -220,9 +220,12 @@ function Dialog(db) {
 	}
 
 	function changeDir(path, name) {
-		let dir = path.split('\\');
+
+		const delimiter = process.env.NODE_ENV !== 'production' ? '\\' : '/';
+		let dir = path.split(delimiter);
+		console.log(dir);
 		dir.splice(1, 0, name);
-		return dir.join('\\');
+		return dir.join(delimiter);
 	}
 
 	function listUsers() {
