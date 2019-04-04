@@ -14,6 +14,7 @@ Dialog = require('./api/Dialog');
 const client = new MongoClient(process.env.DB_URL, { useNewUrlParser: true }),
 urlencodedParser = bodyParser.urlencoded({ extended: false }),
 jsonParser = bodyParser.json();
+let users = [];
 
 app.use(session({
 	secret: process.env.SS_SECRET,
@@ -24,8 +25,8 @@ app.use(session({
 		maxAge: parseInt(process.env.SS_MAXAGE)
 	}
 }));
-app.use('/asset', express.static('public'));
-app.use('/file', express.static('upload'));
+app.use('/asset', express.static('public', { maxAge: process.env.COOKIE_MAXAGE }));
+app.use('/file', express.static('upload', { maxAge: process.env.COOKIE_MAXAGE }));
 app.set('view engine', 'pug');
 
 client.connect((err) => {
@@ -53,16 +54,17 @@ client.connect((err) => {
 	
 	io.on('connection', (socket) => {
 
-		socket.on('join', (room) => {
-			socket.join(room, () => {
-				console.log(`in room ${room}`);
-			});
+		socket.on('join', (data) => {
+
+			socket.join(data.rid);
+			users = user.whoIsOnline(io, socket, users, data.uid);
 		});
 
 		dialog.transfer(io, socket);
 
 		socket.on('disconnect', (data) => {
-			console.log(`${socket.id} disconnected`);
+
+			users = user.whoIsOnline(io, socket, users);
 		});
 	});
 

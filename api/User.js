@@ -10,6 +10,42 @@ function User(db) {
 
 	let user = db.collection('user'), self = this, userReset = {};
 
+	this.whoIsOnline = function(io, socket, users, currentUid = null) {
+
+		let i, online = [];
+
+		if (currentUid === null) {
+
+			i = users.findIndex(user => user.socketId === socket.id);
+			if (i >= 0) users.splice(i, 1);
+
+			for (let user of users)
+				online.push(user.uid);
+
+			io.emit('offline', online);
+		}
+		else {
+			i = users.findIndex(user => user.uid === currentUid);
+
+			if (i < 0) {
+
+				let newConnection = {
+					uid: currentUid,
+					socketId: socket.id
+				};
+				users.push(newConnection);
+			}
+			else users[i].socketId = socket.id;
+
+			for (let user of users)
+				online.push(user.uid);
+
+			io.emit('online', online);
+		}
+
+		return users;
+	};
+
 	this.resetPassword = function(req, res, next) {
 
 		if (!req.body) return res.sendStatus(400);

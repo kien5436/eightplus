@@ -21,7 +21,7 @@ Learn about Node.js
 - [x] login, register
 - [x] icons in chats
 - [ ] notification
-- [ ] users's active status
+- [x] users's active status
 - [x] someone is typing...
 - [ ] multi languages
 - [x] user upload
@@ -40,9 +40,9 @@ Learn about Node.js
 - improve scroll to load messages experience and performance
 
 #### Bugs
-- verify user in a room
-- upload heavy files cause the server runs slow down
-- sometimes old messages are not loaded in the first time login
+- verify user in a room (low)
+- upload heavy files cause the server runs slow down (high)
+- sometimes old messages are not loaded in the first time login (very low)
 
 ## Installation
 ### Prequisites: some knowledge about Node.js and MongoDB

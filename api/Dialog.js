@@ -9,6 +9,7 @@ fs = require('fs');
 module.exports = Dialog;
 
 function Dialog(db) {
+
 	let dialog = db.collection('dialog'),
 	user = db.collection('user'),
 	room = new Room(db),
@@ -156,7 +157,7 @@ function Dialog(db) {
 			let uid = [], roomName = '';
 
 			for (let user of _users) {
-				user.status = (req.cookies.uid == user._id) ? 1 : 0;
+
 				if (req.params.id == user._id) chatWith = user;
 				if ( (req.cookies.uid == user._id) || (req.params.id == user._id) ) uid[uid.length] = user._id;
 			}
@@ -223,7 +224,6 @@ function Dialog(db) {
 
 		const delimiter = process.env.NODE_ENV !== 'production' ? '\\' : '/';
 		let dir = path.split(delimiter);
-		console.log(dir);
 		dir.splice(1, 0, name);
 		return dir.join(delimiter);
 	}

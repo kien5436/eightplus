@@ -7,6 +7,7 @@ window.addEventListener('load', function() {
 	messages = document.getElementById('messages'),
 	rid = document.getElementById('rid').value,
 	attachment = document.getElementById('attachment'),
+	user = document.getElementsByClassName('user'),
 	lastMsg = 20;
 
 	loadMessages(rid).then(res => {
@@ -19,7 +20,12 @@ window.addEventListener('load', function() {
 	})
 	.catch(err => console.error(err));
 
-	socket.on('connect', () => socket.emit('join', rid));
+	socket.on('connect', () => socket.emit('join', { rid: rid, uid: getCookie('uid') }));
+
+	socket.on('online', online => localStorage.setItem('active', JSON.stringify(online)));
+	socket.on('offline', online => localStorage.setItem('active', JSON.stringify(online)));
+	changeOnlineStatus();
+	setInterval(changeOnlineStatus, 60000);
 
 	editor.addEventListener('keypress', e => {
 
@@ -146,6 +152,29 @@ window.addEventListener('load', function() {
 			document.getElementsByClassName('lightbox')[0].remove();
 		}
 	});
+
+	function changeOnlineStatus() {
+	
+		const onliner = JSON.parse(localStorage.getItem('active')),
+		regexCookie = /^j:"(.*)"$/;
+		
+		for (let i = user.length; --i > 0;) {
+
+			let id = user[i].firstChild.href, uid, found = false;
+
+			for (let j = onliner.length; --j >= 0;) {
+				
+				uid = onliner[j].match(regexCookie)[1];
+				if (id.indexOf(uid) > 0) {
+					user[i].querySelector('.user-status').classList.add('active');
+					found = true;
+					break;
+				}
+			}
+
+			!found && user[i].querySelector('.user-status').classList.remove('active');
+		}
+	};
 });
 
 (function() {
