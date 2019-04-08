@@ -1,9 +1,11 @@
 extends layout.pug
 
-prepend css
-	link(rel='preload' href='/asset/css/index.css' as='style')
-	link(rel='preload' href='/socket.io/socket.io.js' as='script')
+block css
 	link(rel='stylesheet' href='/asset/css/index.css')
+prepend css
+	if (ua.indexOf('Chrome') === 0 || ua.indexOf('Safari') === 0)
+		link(rel='preload' href='/asset/css/index.css' as='style')
+		link(rel='preload' href='/socket.io/socket.io.js' as='script')
 
 prepend js
 	script(async src='/socket.io/socket.io.js')
@@ -18,7 +20,10 @@ block content
 					li.setting-item
 						a(href='/logout')=logout
 					li.setting-item.changeBg=changeBg
+					li.setting-item.changeLang=changeLang
 			.contact_header-title=contactTitle
+			.contact_header-search
+				input#findUser.btn(type='search' value='' placeholder=phSearch)
 		ul.contact_body
 			li.user
 				a(href='/t/hall')
@@ -37,7 +42,7 @@ block content
 					.user_info-name=chatWith.username
 					.user_info-status
 						span.user-status.active
-						=statusOn
+						span=statusOn
 				.action
 					.action_info
 						i.fa.fa-ellipsis-v.fa-white#action_info-icon

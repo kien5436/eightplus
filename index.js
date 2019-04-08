@@ -30,6 +30,7 @@ app.use('/file', express.static('upload', { maxAge: process.env.COOKIE_MAXAGE })
 app.set('view engine', 'pug');
 
 client.connect((err) => {
+
 	if (err) console.error(err);
 
 	const db = client.db('eightplus'),
@@ -49,8 +50,10 @@ client.connect((err) => {
 
 	app.get('/logout', cookieParser, user.logout);
 
-	app.get('/reset', user.loadViewReset);
-	app.post('/reset', urlencodedParser, user.resetPassword, user.loadViewReset);
+	app.get('/reset', cookieParser, user.loadViewReset);
+	app.post('/reset', [cookieParser, urlencodedParser], user.resetPassword, user.loadViewReset);
+
+	app.get('/listUsers', user.listUsers);
 	
 	io.on('connection', (socket) => {
 
@@ -62,10 +65,7 @@ client.connect((err) => {
 
 		dialog.transfer(io, socket);
 
-		socket.on('disconnect', (data) => {
-
-			users = user.whoIsOnline(io, socket, users);
-		});
+		socket.on('disconnect', (data) => { users = user.whoIsOnline(io, socket, users); });
 	});
 
 	app.use( (req, res) => res.render('404') );

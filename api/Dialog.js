@@ -172,20 +172,24 @@ function Dialog(db) {
 		})
 		.then(_room => {
 
+			User(db).setLocale(req.cookies, res);
+
 			res.render('index', {
+				ua: require('./UA')(req.headers['user-agent']),
 				users: users,
 				rid: _room.lastErrorObject.upserted || _room.value._id,
 				chatWith: chatWith,
-				phEditor: lang.print('chat.phEditor'),
-				hall: lang.print('chat.hall'),
-				titleEmoji: lang.print('chat.titleEmoji'),
-				titleAttach: lang.print('chat.titleAttach'),
-				titleSend: lang.print('chat.titleSend'),
-				statusOn: lang.print('chat.statusOn'),
-				statusOff: lang.print('chat.statusOff'),
-				contactTitle: lang.print('chat.contactTitle'),
-				logout: lang.print('chat.logout'),
-				changeBg: lang.print('chat.changeBg'),
+				phEditor: lang.print('chat.phEditor', req.cookies.lang),
+				phSearch: lang.print('chat.phSearch', req.cookies.lang),
+				hall: lang.print('chat.hall', req.cookies.lang),
+				titleEmoji: lang.print('chat.titleEmoji', req.cookies.lang),
+				titleAttach: lang.print('chat.titleAttach', req.cookies.lang),
+				titleSend: lang.print('chat.titleSend', req.cookies.lang),
+				statusOn: lang.print('chat.statusOn', req.cookies.lang),
+				contactTitle: lang.print('chat.contactTitle', req.cookies.lang),
+				logout: lang.print('chat.logout', req.cookies.lang),
+				changeBg: lang.print('chat.changeBg', req.cookies.lang),
+				changeLang: lang.print('chat.changeLang', req.cookies.lang),
 				icons: ['smile', 'angry', 'dizzy', 'flushed', 'frown', 'frown-open', 'grimace', 'grin', 'grin-beam', 'grin-beam-sweat', 'grin-hearts', 'grin-squint', 'grin-squint-tears', 'grin-stars', 'grin-tongue', 'grin-tongue-squint', 'grin-tongue-wink', 'grin-wink', 'kiss', 'kiss-beam', 'kiss-wink-heart', 'laugh', 'laugh-beam', 'laugh-squint', 'meh', 'meh-blank', 'tired', 'meh-rolling-eyes', 'sad-cry', 'sad-tear', 'smile-beam', 'smile-wink', 'surprise']
 			});
 		})

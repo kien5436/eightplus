@@ -8,7 +8,7 @@ window.addEventListener('load', function() {
 	rid = document.getElementById('rid').value,
 	attachment = document.getElementById('attachment'),
 	user = document.getElementsByClassName('user'),
-	lastMsg = 20;
+	lastMsg = 20, trans;
 
 	loadMessages(rid).then(res => {
 
@@ -24,12 +24,21 @@ window.addEventListener('load', function() {
 
 	socket.on('online', online => localStorage.setItem('active', JSON.stringify(online)));
 	socket.on('offline', online => localStorage.setItem('active', JSON.stringify(online)));
-	changeOnlineStatus();
+
+	fetch(`/asset/lang/${ getCookie('lang') }.json`)
+	.then(res => res.json())
+	.then(lang => {
+		trans = lang;
+		changeOnlineStatus();
+	})
+	.catch(err => console.error(err));
+
 	setInterval(changeOnlineStatus, 60000);
 
 	editor.addEventListener('keypress', e => {
 
 		if (e.keyCode === 13 && !e.shiftKey) {
+			
 			e.preventDefault();
 			sendMsg(socket);
 		}
@@ -133,6 +142,43 @@ window.addEventListener('load', function() {
 		document.getElementsByClassName('input')[0].appendChild(preview);
 	});
 
+	document.getElementById('findUser').addEventListener('keyup', function() {
+
+		setTimeout(() => {
+
+			let words = this.value.trim().toLowerCase().split('');
+
+			fetch('/listUsers').then(res => {
+
+				if (res.ok) return res.json();
+				throw new Error('Something went wrong');
+			})
+			.then(users => {
+
+				let res = users.filter(user => {
+					return words.every(char => user.username.toLowerCase().indexOf(char) >= 0) && user;
+				});
+				let html = '';
+
+				if (words.length > 0 && res.length > 0) {
+
+					for (let user of res)
+						html += `<li class="user"><a href="/t/${ user._id }"><span class="user-name">${ user.username }</span><span class="user-status"></span></a></li>`;
+				}
+				else {
+					html = `<li class="user"><a href="/t/hall"><span class="user-name">${ trans.chat.hall }</span><span class="user-status active"></span></a></li>`;
+
+					for (let user of users)
+						html += `<li class="user"><a href="/t/${ user._id }"><span class="user-name">${ user.username }</span><span class="user-status"></span></a></li>`;
+				}
+				
+				document.querySelector('.contact_body').innerHTML = html;
+				changeOnlineStatus();
+			})
+			.catch(err => console.error(err));
+		}, 700);
+	});
+
 	document.addEventListener('click', e => {
 
 		const target = e.target;
@@ -153,36 +199,123 @@ window.addEventListener('load', function() {
 		}
 	});
 
+	function upload() {
+		return new Promise((resolve, reject) => {
+
+			const xhr = new XMLHttpRequest(),
+			data = new FormData();
+
+			for (let file of attachment.files) {
+				(localStorage.getItem(file.name) !== 'removed' && localStorage.getItem(file.name) !== null) && data.append('files', file);
+				localStorage.removeItem(file.name);
+			}
+
+			if (data.getAll('files').length > 0) {
+
+				xhr.addEventListener('load', function() {
+					const res = JSON.parse(this.response);
+					data.delete('files');
+					document.getElementsByClassName('preview')[0].remove();
+					if (res.success) resolve(res.info);
+					else reject(res.info);
+				});
+				xhr.upload.addEventListener('progress', function(e) {
+					let percent_complete = (e.loaded / e.total) * 100;
+					console.log(percent_complete);
+				});
+				xhr.open('POST', '/message/upload');
+				xhr.setRequestHeader('Accept', 'application/json');
+				xhr.send(data);
+			}
+			else resolve(null);
+		});
+	}
+
+	function sendMsg(socket) {
+
+		upload()
+		.then((fileUploaded) => {
+
+			const message = {
+				text: editor.value.trim().replace(/\r\n/g, '\n'),
+				file: fileUploaded
+			};
+
+			if (message.text === '' && message.file === null) {
+			
+				caughtEmptyMsg(trans.error['empty message']);
+				return;
+			}
+
+			editor.value = '';
+
+			socket.emit('send message', {
+
+				msg: JSON.stringify(message),
+				senderId: getCookie('uid'),
+				created: Date.now()
+			}, (err) => caughtEmptyMsg(err));
+		})
+		.catch(err => caughtEmptyMsg(err));
+	}
+
 	function changeOnlineStatus() {
 	
 		const onliner = JSON.parse(localStorage.getItem('active')),
-		regexCookie = /^j:"(.*)"$/;
-		
-		for (let i = user.length; --i > 0;) {
+		regexCookie = /^j:"(.*)"$/,
+		currentChat = location.pathname.match(/t\/(\w+)/)[1];
 
-			let id = user[i].firstChild.href, uid, found = false;
+		if (onliner === null) return;
 
-			for (let j = onliner.length; --j >= 0;) {
-				
-				uid = onliner[j].match(regexCookie)[1];
-				if (id.indexOf(uid) > 0) {
-					user[i].querySelector('.user-status').classList.add('active');
-					found = true;
-					break;
+		let userInfoStatus = document.querySelector('.user_info-status'), online = false;
+
+		if (trans !== undefined) {
+
+			for (let i = user.length; --i > 0;) {
+
+				let id = user[i].firstChild.href, uid, found = false;			
+
+				for (let j = onliner.length; --j >= 0;) {
+
+					uid = onliner[j].match(regexCookie)[1];
+
+					if (uid === currentChat && !online) {
+
+						userInfoStatus.firstChild.classList.add('active');
+						userInfoStatus.lastChild.innerText = trans.chat.statusOn;
+						online = true;
+					}
+
+					if (id.indexOf(uid) > 0) {
+
+						user[i].querySelector('.user-status').classList.add('active');
+						found = true;
+						break;
+					}
+				}
+
+				!found && user[i].querySelector('.user-status').classList.remove('active');
+
+				if (!online && currentChat.toLowerCase() !== 'hall') {
+
+					userInfoStatus.firstChild.classList.remove('active');
+					userInfoStatus.lastChild.innerText = trans.chat.statusOff;
 				}
 			}
-
-			!found && user[i].querySelector('.user-status').classList.remove('active');
 		}
 	};
 });
 
 (function() {
-	const pref = {
+	let prefs = {
 		lang: 'en',
 		bg: 'dark',
 	};
-	localStorage.getItem('prefs') === null && localStorage.setItem('prefs', JSON.stringify(pref));
+	localStorage.getItem('prefs') === null && localStorage.setItem('prefs', JSON.stringify(prefs));
+	
+	prefs = JSON.parse(localStorage.getItem('prefs'));
+	if (prefs.bg === 'light') document.body.classList.add('light');
+	else document.body.classList.remove('light');
 })();
 
 let menuActivator = new MenuActivator({
@@ -209,43 +342,27 @@ settingIcon.addEventListener('click', () => {
 });
 
 setting.addEventListener('click', e => {
+
 	if ( e.target.classList.contains('changeBg') ) {
+		
 		document.body.classList.toggle('light');
-		localStorage.setItem('bg', document.body.className);
+		let prefs = JSON.parse(localStorage.getItem('prefs'));
+
+		if (prefs !== null)
+			prefs.bg = prefs.bg === 'dark' ? 'light' : 'dark';
+		else
+			prefs = {
+				lang: 'en',
+				bg: document.body.classList.contains('light') ? 'light' : 'dark'
+			};
+		localStorage.setItem('prefs', JSON.stringify(prefs));
+	}
+	else if ( e.target.classList.contains('changeLang') ) {
+
+		setCookie('lang', getCookie('lang') === 'en' ? 'vi' : 'en', 30);
+		location.reload();
 	}
 });
-
-function upload() {
-	return new Promise((resolve, reject) => {
-
-		const xhr = new XMLHttpRequest(),
-		data = new FormData();
-
-		for (let file of attachment.files) {
-			(localStorage.getItem(file.name) !== 'removed' && localStorage.getItem(file.name) !== null) && data.append('files', file);
-			localStorage.removeItem(file.name);
-		}
-
-		if (data.getAll('files').length > 0) {
-
-			xhr.addEventListener('load', function() {
-				const res = JSON.parse(this.response);
-				data.delete('files');
-				document.getElementsByClassName('preview')[0].remove();
-				if (res.success) resolve(res.info);
-				else reject(res.info);
-			});
-			xhr.upload.addEventListener('progress', function(e) {
-				let percent_complete = (e.loaded / e.total) * 100;
-				console.log(percent_complete);
-			});
-			xhr.open('POST', '/message/upload');
-			xhr.setRequestHeader('Accept', 'application/json');
-			xhr.send(data);
-		}
-		else resolve(null);
-	});
-}
 
 function loadMessages(rid, lastMsg = 0) {
 
@@ -295,51 +412,20 @@ function newMessage(data, old = 0) {
 	}
 }
 
-function sendMsg(socket) {
+function caughtEmptyMsg(err) {
 
-	upload()
-	.then((fileUploaded) => {
+	let input = document.getElementsByClassName('input')[0];
 
-		const message = {
-			text: editor.value.trim().replace(/\r\n/g, '\n'),
-			file: fileUploaded
-		};
-		editor.value = '';
-
-		socket.emit('send message', {
-
-			msg: JSON.stringify(message),
-			senderId: getCookie('uid'),
-			created: Date.now()
-		}, (err) => {
-			let input = document.getElementsByClassName('input')[0];
-
-			if ( !hasChild(input, 'error') ) {
-				let p = document.createElement('p');
-				p.className = 'error show';
-				p.innerText = err;
-				input.appendChild(p);
-				p.addEventListener('animationend', () => {
-					p.classList.remove('show');
-					p.remove();
-				});
-			}
+	if ( !hasChild(input, 'error') ) {
+		let p = document.createElement('p');
+		p.className = 'error show';
+		p.innerText = err;
+		input.appendChild(p);
+		p.addEventListener('animationend', () => {
+			p.classList.remove('show');
+			p.remove();
 		});
-	})
-	.catch(err => {
-		let input = document.getElementsByClassName('input')[0];
-
-		if ( !hasChild(input, 'error') ) {
-			let p = document.createElement('p');
-			p.className = 'error show';
-			p.innerText = err;
-			input.appendChild(p);
-			p.addEventListener('animationend', () => {
-				p.classList.remove('show');
-				p.remove();
-			});
-		}
-	});
+	}
 }
 
 function showFiles(files) {
@@ -378,6 +464,14 @@ function getCookie(cname) {
 		}
 	}
 	return '';
+}
+
+function setCookie(cname, cvalue, expires) {
+
+	let d = new Date();
+	d.setTime(d.getTime() + (expires * 24 * 3600000));
+	expires = 'expires=' + d.toUTCString();
+	document.cookie = cname + '=' + cvalue + ';' + expires + ';path=/';
 }
 
 function hasChild(el, className) {

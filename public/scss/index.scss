@@ -70,7 +70,7 @@ body {
 
 .contact {
 	@extend %col;
-	background: rgba(#000, 0.3);
+	background: rgba(#000, .3);
 	font-size: 1.7em;
 	height: 100%;
 	width: nth($col, 3);
@@ -78,10 +78,13 @@ body {
 		align-items: center;
 		color: #fff;
 		display: flex;
-		height: 10%;
+		flex-wrap: wrap;
+		height: 6rem;
 		justify-content: center;
+		&-setting, &-title { flex: 1 auto }
 		&-setting {
 			position: relative;
+			text-align: right;
 			.fa-cog { vertical-align: top; margin-top: .3em }
 			@at-root
 			.setting {
@@ -104,11 +107,20 @@ body {
 				}
 			}
 		}
+		&-search {
+			flex: 1 100%;
+			> * {
+				background: transparent;
+				border: 1px solid rgba(#fff, .5);
+				color: #fff;
+				cursor: auto;
+				width: 100%;
+			}
+		}
 	}
 	&_body {
 		border-top: 1px solid rgba(#fff, .3);
 		margin: 0 -1em;
-		height: 90%;
 		@extend %scrollbar;
 		@at-root
 		.user {
@@ -134,8 +146,8 @@ body {
 				border-radius: 50%;
 				box-shadow: 0 0 2px #fff;
 				display: inline-block;
-				height: 1rem;
-				width: 1rem;
+				height: .5rem;
+				width: .5rem;
 				&.active { background: #98f979 }
 			}
 		}

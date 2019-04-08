@@ -1,10 +1,13 @@
 extends layout.pug
 
-prepend css
-	link(rel='preload' href='/asset/css/login.css' as='style')
+block css
 	link(rel='stylesheet' href='/asset/css/login.css')
+prepend css
+	if (ua.indexOf('Chrome') === 0 || ua.indexOf('Safari') === 0)
+		link(rel='preload' href='/asset/css/login.css' as='style')
 
 prepend js
+	script(async src='/asset/js/validation.min.js')
 	script(async src='/asset/js/login.min.js')
 
 block content

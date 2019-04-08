@@ -1,12 +1,26 @@
-const lang = require('../public/lang/lang');
-
-module.exports = Validation;
-
 function Validation() {
 
-	this.error = {};
-	this.language = 'en';
+	this.trans = {};
 	let self = this;
+
+	this.setError = function(err, el) {
+
+		let p = el.nextElementSibling;
+
+		if (!p.classList.contains('form-error')) {
+
+			p = document.createElement('p');
+			p.className = 'form-error';
+		}
+		p.innerText = self.trans.error[err];
+		p.style.display === 'none' && p.style.setProperty('display', 'block');
+
+		el.classList.add('invalid');
+		el.insertAdjacentElement('afterend', p);
+		el.focus();
+		
+		return false;
+	};
 
 	this.allowedFile = function(filename) {
 
@@ -19,39 +33,25 @@ function Validation() {
 
 		const regexEmail = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
 
-		if ( !regexEmail.test(email) ) {
-
-			this.error.email = lang.print('error.invalid email', self.language);
-			return false;
-		}
+		if ( !regexEmail.test(email) ) return false;
 		return true;
 	};
 
-	this.isEmpty = function(o, type) {
+	this.isEmpty = function(o) {
 
-		if ( o === null || (Array.isArray(o) && o.length === 0) || (typeof o === 'string' && o.trim() === '') || (typeof o === 'object' && Object.keys(o).length === 0) ) {
-
-			this.error[type] = lang.print(`error.empty ${type}`, self.language);
-			return true;
-		}
+		if ( o === null || (Array.isArray(o) && o.length === 0) || (typeof o === 'string' && o.trim() === '') || (typeof o === 'object' && Object.keys(o).length === 0) ) return true;
 		return false;
 	};
 
 	this.pwdTooShort = function(pwd) {
 
-		if (pwd === null || pwd.length < 6) {
-			this.error.password = lang.print('error.invalid password', self.language);
-			return true;
-		}
+		if (pwd === null || pwd.length < 6) return true;
 		return false;
 	};
 
 	this.samePwd = function(pwd1, pwd2) {
 
-		if (pwd1 !== pwd2) {
-			this.error.password = lang.print('error.not same password', self.language);
-			return false;
-		}
+		if (pwd1 !== pwd2) return false;
 		return true;
 	}
 

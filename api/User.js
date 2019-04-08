@@ -10,14 +10,32 @@ function User(db) {
 
 	let user = db.collection('user'), self = this, userReset = {};
 
+	this.listUsers = function(req, res) {
+
+		user.find().project({ 'username': 1 })
+		.toArray((err, result) => {
+			
+			if (err) {
+			
+				console.error(err);
+				return res.sendStatus(500);
+			}
+			res.json(result);
+		});
+	};
+
 	this.whoIsOnline = function(io, socket, users, currentUid = null) {
 
 		let i, online = [];
 
 		if (currentUid === null) {
 
-			i = users.findIndex(user => user.socketId === socket.id);
-			if (i >= 0) users.splice(i, 1);
+			for (let j = users.length; --j >= 0;) {
+				
+				i = users[j].socketId.findIndex(id => id === socket.id);
+				if (i >= 0) users[j].socketId.splice(i, 1);
+				if (users[j].socketId.length === 0) users.splice(j, 1);
+			}
 
 			for (let user of users)
 				online.push(user.uid);
@@ -31,11 +49,11 @@ function User(db) {
 
 				let newConnection = {
 					uid: currentUid,
-					socketId: socket.id
+					socketId: [socket.id]
 				};
 				users.push(newConnection);
 			}
-			else users[i].socketId = socket.id;
+			else users[i].socketId.push(socket.id);
 
 			for (let user of users)
 				online.push(user.uid);
@@ -59,7 +77,7 @@ function User(db) {
 			}
 			else if (userReset.resetToken !== req.body.resetToken || req.body.authToken !== req.session.authToken) {
 
-				req.data = { error: { token: lang.print('error.session expired') } };
+				req.data = { error: { token: lang.print('error.session expired', req.cookies.lang) } };
 				return next();
 			}
 
@@ -108,13 +126,16 @@ function User(db) {
 		if (Object.keys(req.query).length > 0)
 			submitText = 'reset.submitTextReset';
 
+		self.setLocale(req.cookies, res);
+
 		res.render('reset', {
-			title: lang.print('reset.title'),
-			phEmail: lang.print('register.phEmail'),
-			phPassword: lang.print('reset.phPassword'),
-			phPasswordConfirm: lang.print('reset.phPasswordConfirm'),
-			guideline: lang.print(guideline),
-			submitText: lang.print(submitText),
+			ua: require('./UA')(req.headers['user-agent']),
+			title: lang.print('reset.title', req.cookies.lang),
+			phEmail: lang.print('register.phEmail', req.cookies.lang),
+			phPassword: lang.print('reset.phPassword', req.cookies.lang),
+			phPasswordConfirm: lang.print('reset.phPasswordConfirm', req.cookies.lang),
+			guideline: lang.print(guideline, req.cookies.lang),
+			submitText: lang.print(submitText, req.cookies.lang),
 			email: email,
 			type: type,
 			error: error,
@@ -141,6 +162,7 @@ function User(db) {
 		let error = validateRegister(email, username, password);
 		
 		if (error === null) {
+
 			user.find({ email: email }).count()
 			.then(result => {
 				
@@ -189,13 +211,16 @@ function User(db) {
 
 			if (result) return res.redirect('/t/hall');
 
+			self.setLocale(req.cookies, res);
+
 			res.render('register', {
-				title: lang.print('register.title'),
-				phEmail: lang.print('register.phEmail'),
-				phUsername: lang.print('register.phUsername'),
-				phPassword: lang.print('login.phPassword'),
-				submitText: lang.print('register.submitText'),
-				loginText: lang.print('register.loginText'),
+				ua: require('./UA')(req.headers['user-agent']),
+				title: lang.print('register.title', req.cookies.lang),
+				phEmail: lang.print('register.phEmail', req.cookies.lang),
+				phUsername: lang.print('register.phUsername', req.cookies.lang),
+				phPassword: lang.print('login.phPassword', req.cookies.lang),
+				submitText: lang.print('register.submitText', req.cookies.lang),
+				loginText: lang.print('register.loginText', req.cookies.lang),
 				email: (req.data !== undefined) ? req.data.email : null,
 				username: (req.data !== undefined) ? req.data.username : null,
 				error: (req.data !== undefined) ? req.data.error : null,
@@ -205,6 +230,7 @@ function User(db) {
 	};
 
 	this.login = function(req, res, next) {
+
 		if (!req.body) return res.sendStatus(400);
 		
 		let email = req.body.email.trim() || null,
@@ -249,18 +275,30 @@ function User(db) {
 
 			if (result) return res.redirect('/t/hall');
 
+			self.setLocale(req.cookies, res);
+
 			res.render('login', {
-				title: lang.print('login.title'),
-				phEmail: lang.print('register.phEmail'),
-				phPassword: lang.print('login.phPassword'),
-				forgotText: lang.print('login.forgotText'),
-				registerText: lang.print('login.registerText'),
-				submitText: lang.print('login.submitText'),
+				ua: require('./UA')(req.headers['user-agent']),
+				title: lang.print('login.title', req.cookies.lang),
+				phEmail: lang.print('register.phEmail', req.cookies.lang),
+				phPassword: lang.print('login.phPassword', req.cookies.lang),
+				forgotText: lang.print('login.forgotText', req.cookies.lang),
+				registerText: lang.print('login.registerText', req.cookies.lang),
+				submitText: lang.print('login.submitText', req.cookies.lang),
 				email: (req.data !== undefined) ? req.data.email : null,
 				error: (req.data !== undefined) ? req.data.error : null,
 			});
 		})
 		.catch(err => console.error(err));
+	};
+
+	this.setLocale = function(cookies, res) {
+
+		const locale = ['en', 'vi'];
+
+		if (!cookies.lang || locale.indexOf(cookies.lang) < 0)
+			res.cookie('lang', 'en', { maxAge: process.env.COOKIE_MAXAGE });
+		Validation.language = cookies.lang;
 	};
 
 	this.exists = function(req, res) {
@@ -300,7 +338,7 @@ function User(db) {
 
 				req.data = {
 					email: email,
-					error: { email: lang.print('error.unexistedUser') }
+					error: { email: lang.print('error.unexistedUser', req.cookies.lang) }
 				};
 			}
 			else {
@@ -331,7 +369,7 @@ function User(db) {
 					to: email,
 					priority: 'high',
 					subject: 'Password reset',
-					text: `You are receiving this because you have requested the reset of the password for your account.\nPlease click on the following link, or paste this into your browser to complete the process:\n						http://${ req.headers.host + '/reset?token=' + userReset.resetToken }\nIf you did not request this, please ignore this email and your password will remain unchanged.`
+					text: `You are receiving this because you have requested the reset of the password for your account.\nPlease click on the following link, or paste this into your browser to complete the process:\nhttp://${ req.headers.host + '/reset?token=' + userReset.resetToken }\nIf you did not request this, please ignore this email and your password will remain unchanged.`
 				};
 
 				transporter.sendMail(data, (err) => {
@@ -357,8 +395,8 @@ function User(db) {
 			|| Validation.isEmpty(username, 'username')
 			|| Validation.pwdTooShort(password)) {
 			return Validation.error;
-		}
-		return null;
+	}
+	return null;
 	}
 
 	function hash(pwd, salt = crypto.randomBytes(512).toString('base64')) {

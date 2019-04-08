@@ -19,12 +19,14 @@ window.addEventListener('load', function() {
 
 			e.preventDefault();
 
-			let email = this.email.value, password = this.password.value;
+			let email = this.email.value, password = this.password.value, nickname = this.nickname.value;
 
 			if (validation.isEmpty(email))
 				return validation.setError('empty email', this.email);
 			else if (!validation.isEmail(email))
 				return validation.setError('invalid email', this.email);
+			else if (validation.isEmpty(nickname))
+				return validation.setError('empty username', this.nickname);
 			else if (validation.isEmpty(password))
 				return validation.setError('empty password', this.password);
 			else if (validation.pwdTooShort(password))

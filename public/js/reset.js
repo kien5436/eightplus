@@ -19,16 +19,20 @@ window.addEventListener('load', function() {
 
 			e.preventDefault();
 
-			let email = this.email.value, password = this.password.value;
+			let email = this.email && this.email.value,
+			password = this.newPassword && this.newPassword.value,
+			pwdConfirmation = this.passwordConfirmation && this.passwordConfirmation.value;
 
-			if (validation.isEmpty(email))
+			if (this.email && validation.isEmpty(email))
 				return validation.setError('empty email', this.email);
-			else if (!validation.isEmail(email))
+			else if (this.email && !validation.isEmail(email))
 				return validation.setError('invalid email', this.email);
-			else if (validation.isEmpty(password))
-				return validation.setError('empty password', this.password);
-			else if (validation.pwdTooShort(password))
-				return validation.setError('invalid password', this.password);
+			else if ( this.newPassword && validation.isEmpty(password) )
+				return validation.setError('empty password', this.newPassword);
+			else if ( this.newPassword && validation.pwdTooShort(password) )
+				return validation.setError('invalid password', this.newPassword);
+			else if ( this.passwordConfirmation && !validation.samePwd(password, pwdConfirmation) )
+				return validation.setError('not same password', this.passwordConfirmation);
 
 			this.submit();
 		});

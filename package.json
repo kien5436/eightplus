@@ -11,7 +11,7 @@
     "type": "git",
     "url": "git+ssh://git@bitbucket.org/kiendp/eightplus.git"
   },
-  "author": "Pham Trung Kien",
+  "author": "Phạm Trung Kiên",
   "license": "MIT",
   "homepage": "https://bitbucket.org/kiendp/eightplus",
   "dependencies": {

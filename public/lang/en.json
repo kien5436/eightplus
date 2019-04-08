@@ -25,6 +25,7 @@
 	},
 	"chat": {
 		"phEditor": "Type a message...",
+		"phSearch": "Find someone",
 		"titleEmoji": "Select an emoji",
 		"titleSend": "Send message",
 		"statusOn": "Active now",
@@ -32,6 +33,7 @@
 		"contactTitle": "Who is online",
 		"logout": "Logout",
 		"changeBg": "Change background",
+		"changeLang": "Change language",
 		"titleAttach": "Add files",
 		"hall": "Hall"
 	},

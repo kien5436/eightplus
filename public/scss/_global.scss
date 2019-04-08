@@ -22,7 +22,7 @@
 	padding: 0
 }
 
-html {
+body {
 	font: normal 400 62.5% 'Nunito', sans-serif;
 	@at-root {
 		// reset css
@@ -64,7 +64,7 @@ html {
 			border: none;
 			cursor: pointer;
 			display: inline-block;
-			font-size: 1.4rem;
+			// font-size: 1.4rem;
 			padding: .5em 1em;
 			position: relative;
 			transition: .3s;
