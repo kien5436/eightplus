@@ -43,7 +43,7 @@ Learn about Node.js
 	- [ ] delete messages
 	- [ ] change background
 
-- [ ] video call, sound call (I think I will never do this)
+- [ ] video call, sound call
 
 #### What news
 - improve scroll to load messages experience and performance

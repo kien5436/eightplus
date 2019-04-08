@@ -16,6 +16,7 @@ function Dialog(db) {
 	self = this;
 
 	this.upload = function(req, res) {
+
 		const form = new formidable.IncomingForm(), files = [];
 
 		form.uploadDir = 'upload/';
@@ -118,6 +119,8 @@ function Dialog(db) {
 
 				if (err) console.error(err);
 
+				const room = Object.keys(socket.rooms)[1];
+				
 				if (userInfo !== null) {
 
 					dialog.insertOne({
@@ -132,7 +135,6 @@ function Dialog(db) {
 
 						if (err) console.error(err);
 
-						const room = Object.keys(socket.rooms)[1];
 						io.in(room).emit('new message', result.ops[0]);
 					});
 				}

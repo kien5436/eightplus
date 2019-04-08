@@ -200,6 +200,7 @@ window.addEventListener('load', function() {
 	});
 
 	function upload() {
+		
 		return new Promise((resolve, reject) => {
 
 			const xhr = new XMLHttpRequest(),
@@ -242,7 +243,7 @@ window.addEventListener('load', function() {
 			};
 
 			if (message.text === '' && message.file === null) {
-			
+				
 				caughtEmptyMsg(trans.error['empty message']);
 				return;
 			}
@@ -257,10 +258,12 @@ window.addEventListener('load', function() {
 			}, (err) => caughtEmptyMsg(err));
 		})
 		.catch(err => caughtEmptyMsg(err));
+
+		editor.focus();
 	}
 
 	function changeOnlineStatus() {
-	
+		
 		const onliner = JSON.parse(localStorage.getItem('active')),
 		regexCookie = /^j:"(.*)"$/,
 		currentChat = location.pathname.match(/t\/(\w+)/)[1];
@@ -355,14 +358,14 @@ setting.addEventListener('click', e => {
 				lang: 'en',
 				bg: document.body.classList.contains('light') ? 'light' : 'dark'
 			};
-		localStorage.setItem('prefs', JSON.stringify(prefs));
-	}
-	else if ( e.target.classList.contains('changeLang') ) {
+			localStorage.setItem('prefs', JSON.stringify(prefs));
+		}
+		else if ( e.target.classList.contains('changeLang') ) {
 
-		setCookie('lang', getCookie('lang') === 'en' ? 'vi' : 'en', 30);
-		location.reload();
-	}
-});
+			setCookie('lang', getCookie('lang') === 'en' ? 'vi' : 'en', 30);
+			location.reload();
+		}
+	});
 
 function loadMessages(rid, lastMsg = 0) {
 
@@ -429,13 +432,14 @@ function caughtEmptyMsg(err) {
 }
 
 function showFiles(files) {
+
 	let html = '';
 
 	if (files !== null) {
 		for (let file of files) {
 			if (file.path.indexOf('image') === 0) {
 				html += `<div class="preview_file preview_file-img">
-				<img src="/file/${ file.path }">
+				<img src="/file/${ file.path }" alt="${ file.name }">
 				</div>`;
 			}
 			else {
