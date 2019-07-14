@@ -1,0 +1,115 @@
+@font-face {
+	font-family: 'Nunito';
+	font-style: normal;
+	font-weight: 400;
+	src: local('Nunito Regular'), local('Nunito-Regular'),
+	url('../fonts/Nunito/Nunito-400.woff2') format('woff2'),
+	url('../fonts/Nunito/Nunito-400.woff') format('woff');
+}
+
+@font-face {
+	font-family: 'Nunito';
+	font-style: normal;
+	font-weight: 700;
+	src: local('Nunito Bold'), local('Nunito-Bold'),
+	url('../fonts/Nunito/Nunito-700.woff2') format('woff2'),
+	url('../fonts/Nunito/Nunito-700.woff') format('woff');
+}
+
+*, *:before, *:after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0
+}
+
+body {
+	font: normal 400 62.5% 'Nunito', sans-serif;
+	@at-root {
+		// reset css
+		a {
+			text-decoration: none;
+			&,
+			&:active,
+			&:focus,
+			&:visited {
+				color: #1268ecff;
+				outline: 0;
+			}
+		}
+		ul {
+			list-style: none;
+			text-align: left;
+		}
+		textarea {
+			font-family: 'Nunito', sans-serif;
+			resize: none
+		}
+		input {
+			border: none;
+			display: inline-block;
+			font-family: 'Nunito', sans-serif;
+			outline: none;
+		}
+		select {
+			-webkit-appearance: none;
+			appearance: none;
+			border: 1px solid #ccc;
+		}
+
+		// bootstrap snippets
+		.fa:not(:only-child) {margin-right: .5em}
+
+		.btn {
+			background: #eee;
+			border: none;
+			cursor: pointer;
+			display: inline-block;
+			// font-size: 1.4rem;
+			padding: .5em 1em;
+			position: relative;
+			transition: .3s;
+			&-dropdown { // only work with div
+				position: relative;
+				&-menu {
+					background: #fff;
+					border: 1px solid #ccc;
+					cursor: pointer;
+					display: none;
+					left: 0;
+					position: absolute;
+					text-align: left;
+					top: 100%;
+					width: 100%;
+					&.show {display: block}
+				}
+				&-item {
+					&:hover { background: #eee }
+					padding: .5em;
+					transition: .3s;
+				}
+				&-divider { border-bottom: 1px solid #ccc }
+			}
+			&:hover &-title {display: block}
+			&-title {
+				background: inherit;
+				display: none;
+				font-size: 1em;
+				font-style: normal;
+				left: -50%;
+				padding: 0.5em;
+				position: absolute;
+				top: 110%;
+			}
+		}
+
+		.noscript:before {
+			background: rgba(#fff, .8);
+			content: 'Enable javascript to continue';
+			font-size: 3rem;
+			padding-top: 3rem;
+			position: absolute;
+			text-align: center;
+			top: 0; left: 0; right: 0; bottom: 0;
+		}
+	}
+}

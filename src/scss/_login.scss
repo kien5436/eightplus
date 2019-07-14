@@ -1,0 +1,73 @@
+html, body {
+	background: -moz-radial-gradient(0% 100%, ellipse cover, rgba(104,128,138,.4) 10%,rgba(138,114,76,0) 40%),-moz-linear-gradient(top,  rgba(57,173,219,.25) 0%, rgba(42,60,87,.4) 100%), -moz-linear-gradient(-45deg,  #670d10 0%, #092756 100%);
+	background: -webkit-radial-gradient(0% 100%, ellipse cover, rgba(104,128,138,.4) 10%,rgba(138,114,76,0) 40%), -webkit-linear-gradient(top,  rgba(57,173,219,.25) 0%,rgba(42,60,87,.4) 100%), -webkit-linear-gradient(-45deg,  #670d10 0%,#092756 100%);
+	background: -o-radial-gradient(0% 100%, ellipse cover, rgba(104,128,138,.4) 10%,rgba(138,114,76,0) 40%), -o-linear-gradient(top,  rgba(57,173,219,.25) 0%,rgba(42,60,87,.4) 100%), -o-linear-gradient(-45deg,  #670d10 0%,#092756 100%);
+	background: -ms-radial-gradient(0% 100%, ellipse cover, rgba(104,128,138,.4) 10%,rgba(138,114,76,0) 40%), -ms-linear-gradient(top,  rgba(57,173,219,.25) 0%,rgba(42,60,87,.4) 100%), -ms-linear-gradient(-45deg,  #670d10 0%,#092756 100%);
+	background: -webkit-radial-gradient(0% 100%, ellipse cover, rgba(104,128,138,.4) 10%,rgba(138,114,76,0) 40%), linear-gradient(to bottom,  rgba(57,173,219,.25) 0%,rgba(42,60,87,.4) 100%), linear-gradient(135deg,  #670d10 0%,#092756 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3E1D6D', endColorstr='#092756',GradientType=1 );
+	align-items: center;
+	display: flex;
+	height: 100%;
+	justify-content: center;
+	overflow: hidden;
+	width: 100%;
+}
+
+.form {
+	align-items: center;
+	background: rgba(#fff, .07);
+	border-radius: .5rem;
+	box-shadow: 0 0 5em rgba(#000, .3);
+	display: flex;
+	flex-direction: column;
+	height: 50%;
+	justify-content: center;
+	min-height: 25em;
+	input {
+		background: transparent;
+		border: 1px solid rgba(#fff, .5);
+		color: #fff;
+		margin-bottom: 1em;
+		width: 80%;
+		&:not([type=submit]) { cursor: unset }
+		&[type=submit] {
+			font-weight: 700;
+			text-transform: uppercase;
+			&:hover {
+				background: rgba(#000, .3);
+				border: 1px solid rgba(#000, .3);
+			}
+		}
+		&:focus { box-shadow: 0 0 2px #fff }
+		&.invalid {
+			border: none;
+			box-shadow: 0 0 4px #ff5151
+		}
+	}
+	.redirect {
+		display: flex;
+		justify-content: space-around;
+		width: 80%
+	}
+	a {
+		color: rgba(#fff, .5);
+		font-size: 1.5em;
+		&:hover { text-decoration: underline }
+	}
+	.p,
+	&-error {
+		color: #fff;
+		font-size: 1.2em;
+		align-self: flex-start;
+		margin: -.5em 0 1em 10%;
+		width: 80%;
+		a { font-size: inherit }
+	}
+	.p { font-size: 1.5em }
+	@media #{ map-get($break-points, phone) } {
+		width: 80%;
+	}
+	@media #{ map-get($break-points, tablet) } {
+		width: 50%;
+	}
+}

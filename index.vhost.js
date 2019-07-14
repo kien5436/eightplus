@@ -1,14 +1,16 @@
+/**
+ * This is not a file for development purpose
+ * It's a temporary workaround to run the app with some subdomains
+ */
 if (process.env.NODE_ENV !== 'production') dotenv = require('dotenv').config();
 const express = require('express');
 const app = express();
-const morgan = require('morgan');
 const http = require('http').Server(app);
 const io = require('socket.io')(http).sockets;
+const logger = require('morgan');
 const cookieParser = require('cookie-parser')();
 const session = require('express-session');
 const mongoose = require('mongoose');
-
-const api = require('./routes/api');
 
 mongoose.connect(process.env.DB_URL, {
     useCreateIndex: true,
@@ -32,10 +34,7 @@ if (process.env.NODE_ENV !== 'production') {
     }));
 }
 
-app.use(morgan('dev'));
-
-const main = express(),
-    vhost = require('vhost');
+const main = express();
 
 main.use(express.urlencoded({ extended: false }));
 main.use(express.json());
@@ -50,19 +49,21 @@ main.use(session({
 }));
 main.set('view engine', 'pug');
 
-main.use('/api/v1', api);
-main.use('/', (req, res, next) => {
+const apiRouter = require('./routes/api');
+const publicRouter = require('./routes/web/public');
 
-    console.log(req);
-
-    res.send('messpresso')
-})
+main.use('/api/v1', apiRouter);
+main.use('/', publicRouter);
 
 // handle domain and static files in development
 // because heroku doesn't support subdomain
 const static = express();
 static.use('/', express.static('assets', { maxAge: process.env.COOKIE_MAXAGE }));
-static.use('/file', express.static('uploads', { maxAge: process.env.COOKIE_MAXAGE }));
+
+const staticContent = express();
+staticContent.use('/', express.static('uploads', { maxAge: process.env.COOKIE_MAXAGE }));
+
+app.use(logger('dev'));
 
 // CORS: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
 app.use((req, res, next) => {
@@ -78,7 +79,9 @@ app.use((req, res, next) => {
     next();
 });
 
+const vhost = require('vhost');
 app.use(vhost('static.messpresso.com', static));
+app.use(vhost('scontent.messpresso.com', staticContent));
 app.use(vhost('messpresso.com', main));
 
 app.use((req, res, next) => {

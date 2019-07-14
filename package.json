@@ -1,32 +1,36 @@
 {
-  "name": "eightplus",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js",
-    "test": "npx nodemon"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com:shhlkien/eightplus.git"
-  },
-  "author": "Phạm Trung Kiên",
-  "license": "MIT",
-  "homepage": "https://github.com/shhlkien/eightplus",
-  "dependencies": {
-    "body-parser": "^1.18.3",
-    "cookie-parser": "^1.4.3",
-    "express": "^4.16.4",
-    "express-session": "^1.15.6",
-    "formidable": "^1.2.1",
-    "mongodb": "^3.1.13",
-    "nodemailer": "^5.1.1",
-    "pug": "^2.0.3",
-    "socket.io": "^2.2.0"
-  },
-  "devDependencies": {
-    "dotenv": "^6.2.0",
-    "nodemon": "^1.18.9"
-  }
+    "name": "messpresso",
+    "version": "2.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "build": "npx webpack --config webpack/config.prod.js",
+        "start": "export NODE_ENV=production && node index.js",
+        "test": "export NODE_ENV=development && node index.js",
+        "vstart": "export NODE_ENV=production && node index.vhost.js",
+        "vtest": "export NODE_ENV=development && node index.vhost.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+ssh://git@github.com:shhlkien/messpresso.git"
+    },
+    "author": "Phạm Trung Kiên",
+    "license": "MIT",
+    "homepage": "https://github.com/shhlkien/messpresso",
+    "dependencies": {
+        "cookie-parser": "^1.4.3",
+        "express": "^4.16.4",
+        "express-session": "^1.15.6",
+        "jsonwebtoken": "^8.5.1",
+        "mongoose": "^5.5.5",
+        "morgan": "^1.9.1",
+        "multer": "^1.4.1",
+        "nodemailer": "^5.1.1",
+        "pug": "^2.0.3",
+        "socket.io": "^2.2.0"
+    },
+    "devDependencies": {
+        "dotenv": "^6.2.0",
+        "vhost": "^3.0.2"
+    }
 }

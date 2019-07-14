@@ -1,7 +1,9 @@
+/assets
+/webpack/manifest.json
 /node_modules
 .env
-/upload/image/*
-/upload/sound/*
-/upload/others/*
+/uploads/image/*
+/uploads/sound/*
+/uploads/others/*
 !plucky.mp3
 !.gitkeep
