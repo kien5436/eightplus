@@ -9,7 +9,7 @@ prepend css
 
 prepend js
 	script(async src='/socket.io/socket.io.js')
-	script(async src='/asset/js/chat.min.js')
+	script(async src='/asset/js/chat.js')
 
 block content
 	.contact
@@ -34,7 +34,7 @@ block content
 					a(href='/t/' + user._id)
 						span.user-name=user.username
 						span.user-status
-		
+
 	.chat
 		.chat_content
 			.chat_content-header
@@ -65,6 +65,6 @@ block content
 					input(type='file' id='attachment' multiple)
 				.xtra_input-send
 					i.fa.fa-send.fa-white#btn-send(title=titleSend)
-	
+
 	audio#bell
 		source(src='/file/sound/plucky.mp3' type='audio/mpeg')

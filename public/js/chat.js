@@ -38,7 +38,7 @@ window.addEventListener('load', function() {
 	editor.addEventListener('keypress', e => {
 
 		if (e.keyCode === 13 && !e.shiftKey) {
-			
+
 			e.preventDefault();
 			sendMsg(socket);
 		}
@@ -47,9 +47,9 @@ window.addEventListener('load', function() {
 
 	socket.on('_typing', data => {
 
-		let typing = 
+		let typing =
 		`<li class="message" id="typing">
-		<div class="message-wrapper"> 
+		<div class="message-wrapper">
 		<div class="dot-wrapper">
 		<div class="dot-hint">${ data.username } is typing...</div>
 		<div class="dot dot-1"></div><div class="dot dot-2"></div><div class="dot dot-3"></div>
@@ -81,7 +81,7 @@ window.addEventListener('load', function() {
 
 	messages.addEventListener('scroll', function() {
 		if (this.scrollTop === 0 && lastMsg > -1) {
-			
+
 			loadMessages(rid, lastMsg)
 			.then(res => {
 				if (res.success && res.content !== null && res.content.length > 0) {
@@ -171,7 +171,7 @@ window.addEventListener('load', function() {
 					for (let user of users)
 						html += `<li class="user"><a href="/t/${ user._id }"><span class="user-name">${ user.username }</span><span class="user-status"></span></a></li>`;
 				}
-				
+
 				document.querySelector('.contact_body').innerHTML = html;
 				changeOnlineStatus();
 			})
@@ -200,7 +200,7 @@ window.addEventListener('load', function() {
 	});
 
 	function upload() {
-		
+
 		return new Promise((resolve, reject) => {
 
 			const xhr = new XMLHttpRequest(),
@@ -243,7 +243,7 @@ window.addEventListener('load', function() {
 			};
 
 			if (message.text === '' && message.file === null) {
-				
+
 				caughtEmptyMsg(trans.error['empty message']);
 				return;
 			}
@@ -263,7 +263,7 @@ window.addEventListener('load', function() {
 	}
 
 	function changeOnlineStatus() {
-		
+
 		const onliner = JSON.parse(localStorage.getItem('active')),
 		regexCookie = /^j:"(.*)"$/,
 		currentChat = location.pathname.match(/t\/(\w+)/)[1];
@@ -276,7 +276,7 @@ window.addEventListener('load', function() {
 
 			for (let i = user.length; --i > 0;) {
 
-				let id = user[i].firstChild.href, uid, found = false;			
+				let id = user[i].firstChild.href, uid, found = false;
 
 				for (let j = onliner.length; --j >= 0;) {
 
@@ -307,6 +307,8 @@ window.addEventListener('load', function() {
 			}
 		}
 	};
+
+  socket.on('test', data => console.log(data))
 });
 
 (function() {
@@ -315,7 +317,7 @@ window.addEventListener('load', function() {
 		bg: 'dark',
 	};
 	localStorage.getItem('prefs') === null && localStorage.setItem('prefs', JSON.stringify(prefs));
-	
+
 	prefs = JSON.parse(localStorage.getItem('prefs'));
 	if (prefs.bg === 'light') document.body.classList.add('light');
 	else document.body.classList.remove('light');
@@ -347,7 +349,7 @@ settingIcon.addEventListener('click', () => {
 setting.addEventListener('click', e => {
 
 	if ( e.target.classList.contains('changeBg') ) {
-		
+
 		document.body.classList.toggle('light');
 		let prefs = JSON.parse(localStorage.getItem('prefs'));
 
@@ -386,9 +388,9 @@ function loadMessages(rid, lastMsg = 0) {
 function newMessage(data, old = 0) {
 
 	const message = document.getElementsByClassName('message');
-	let bell = document.getElementById('bell'), newMsg = 
+	let bell = document.getElementById('bell'), newMsg =
 	`<li class="message" data-scroll="${ data.scroll }">
-	<div class="message-wrapper${ getCookie('uid').indexOf(data.sender.id) >= 0 ? ' you' : '' }"> 
+	<div class="message-wrapper${ getCookie('uid').indexOf(data.sender.id) >= 0 ? ' you' : '' }">
 	<div class="message-content">
 	<b class="message-sender">${ data.sender.name }:</b><br/>
 	${ txt2Emoji(data.msg.text) }<br/>
