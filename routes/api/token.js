@@ -1,10 +1,10 @@
-const express = require('express');
-const router = express.Router();
-const mongoose = require('mongoose');
+// const express = require('express');
+// const router = express.Router();
+// const mongoose = require('mongoose');
 
-const Token = require('../../controllers/api/token');
+// const Token = require('../../controllers/api/token');
 
-router
-	.post('/', Token.refresh)
+// router
+// 	.post('/', Token.refresh)
 
-module.exports = router;
+// module.exports = router;

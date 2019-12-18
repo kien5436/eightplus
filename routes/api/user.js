@@ -1,21 +1,20 @@
-const express = require('express');
-const router = express.Router();
-const mongoose = require('mongoose');
+const router = require('express').Router();
+const cookieParser = require('cookie-parser')(process.env.COOKIE_SECRET);
 
-const User = require('../../controllers/api/user');
+const { register, login, update } = require('../../controllers/api/user');
 const auth = require('../../controllers/middleware/auth');
 
-/**
- *
- * verify request user is in db before do anything
- */
+const User = require('../../models/user');
+const error = require('../../helpers/error')
+const { Types } = require('mongoose')
+
 router
-	.delete('/:id', User.delete)
-	.get('/', User.list) // ?uid=user_id&step=skip_number
-	.get('/:id', User.getInfo)
-	.get('/search', User.search)
-	.post('/login', User.login)
-	.post('/register', User.register)
-	.put('/:id', User.update)
+  // .get('/:id', User.getInfo)
+  .put('/:id', [cookieParser, auth], update)
+  //   .delete('/:id', User.delete)
+  //   .get('/search', User.search)
+  .post('/login', [cookieParser, auth], login)
+  .post('/register', register)
+// .get('/', User.list) // ?uid=user_id&step=skip_number
 
 module.exports = router;

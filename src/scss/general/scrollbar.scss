@@ -1,0 +1,31 @@
+.has-scrollbar {
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: rgba(#000, .3) rgba(#fff, .1);
+  scrollbar-width: thin;
+
+  &::-webkit-scrollbar {
+    max-height: 6px;
+    max-width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(#000, .3);
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(#fff, .1);
+  }
+}
+
+body.dark .has-scrollbar {
+  scrollbar-color: rgba(#fff, .3) rgba(#000, .1);
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(#fff, .3);
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(#000, .1);
+  }
+}

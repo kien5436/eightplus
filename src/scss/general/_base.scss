@@ -1,0 +1,22 @@
+$tablet: 768px;
+@import 'fonts';
+@import 'colors';
+@import '~bulma/sass/utilities/_all.sass';
+@import '~bulma/sass/base/_all.sass';
+
+html {
+  overflow: auto
+}
+
+input[type=checkbox],
+input[type=radio] {
+  vertical-align: sub
+}
+
+.has-background-blue2 {
+  background: $blue2 !important
+}
+
+.full-screen-height {
+  height: 100vh
+}

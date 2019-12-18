@@ -1,0 +1,63 @@
+@import '~bulma/sass/components/modal';
+
+.modal {
+  opacity: 0;
+  transition: .3s;
+  visibility: hidden;
+
+  .delete {
+    @extend %delete;
+  }
+
+  &.is-active {
+    opacity: 1;
+    visibility: visible;
+
+    .modal-card {
+      transform: scale(1)
+    }
+  }
+
+  &-background {
+    background: rgba(#000, .3)
+  }
+
+  &-card {
+    box-shadow: 0 3px 10px 2px $black3;
+    transform: scale(0);
+    transition: .3s;
+  }
+
+  &-card-foot {
+    justify-content: center
+  }
+
+  @include mobile {
+    padding-left: 4rem
+  }
+}
+
+body.dark .modal {
+
+  &-background {
+    background: rgba(#000, .9)
+  }
+
+  &-card-head,
+  &-card-body,
+  &-card-foot {
+    background: $black2
+  }
+
+  &-card-head {
+    border-bottom-color: $grey
+  }
+
+  &-card-foot {
+    border-top-color: $grey
+  }
+
+  &-card-body a {
+    color: $red !important
+  }
+}

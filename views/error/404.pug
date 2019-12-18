@@ -1,10 +1,11 @@
-doctype html
-head
-   title Page not found
-   link(rel='stylesheet' href='/asset/css/404.css')
-body
-   .error
-     p.four
-     p.zero
-     p.four
-     div You have lost
+extends ../templates/layout
+
+block content
+
+  include ../templates/home-aside
+
+  .error
+    p.four
+    p.zero
+    p.four
+    div= dict['404'].content

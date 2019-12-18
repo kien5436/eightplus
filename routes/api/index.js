@@ -1,46 +1,24 @@
 const router = require('express').Router();
 
 const user = require('./user');
-const room = require('./room');
-const message = require('./message');
-const token = require('./token');
+const upload = require('../../controllers/api/upload');
+// const room = require('./room');
+// const message = require('./message');
+// const token = require('./token');
 
 router
-	.use('/conversation', room)
-	.use('/message', message)
-	.use('/token', token)
-	.use('/user', user)
-	.use((req, res, next) => {
+  // .use('/conversation', room)
+  .use('/message', (req, res, next) => {
 
-		const err = new Error('Not found');
-		err.status = 404;
-		next(err);
-	})
-	.use((err, req, res, next) => {
+    console.log(req.body, req.app.get('ioMessages'));
+    const { messageSocket, messageIO } = req.app.get('ioMessage');
 
-		console.log(err);
-		console.table(err);
+    messageSocket.emit('receive_message', 'hello client');
 
-		if (res.headersSent) return;
-
-		const serverErr = [ 'MongoError'];
-
-		if (serverErr.indexOf(err.name) < 0) {
-
-			res.status(err.status || 500).json({
-				ok: false,
-				error: {
-					message: err.message,
-					errors: err.errors,
-				}
-			});
-		}
-		else res.status(500).json({
-			ok: false,
-			error: {
-				message: 'Internal server error'
-			}
-		});
-	});
+    res.sendStatus(200)
+  })
+  // .use('/token', token)
+  .use('/upload', upload)
+  .use('/user', user);
 
 module.exports = router;

@@ -1,35 +1,31 @@
-const mongoose = require('mongoose');
+const { Schema, model } = require('mongoose');
 
-const messageSchema = mongoose.Schema({
-
-	_id: mongoose.ObjectId,
-	created: {
-		default: Date.now(),
-		type: Number,
-	},
-	msg: {
-		file: {
-			default: null,
-			type: String,
-		},
-		text: {
-			default: null,
-			trim: true,
-			type: String,
-		},
-	},
-	sender: {
-		type: [{
-			id: {
-				ref: 'User._id',
-				type: mongoose.ObjectId,
-			},
-			name: {
-				ref: 'User.name',
-				type: String,
-			}
-		}]
-	},
+const messageSchema = new Schema({
+  cid: {
+    type: Schema.Types.ObjectId,
+    ref: 'Conversation'
+  },
+  origin: {
+    type: Schema.Types.ObjectId,
+    ref: 'Message'
+  },
+  sender: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  content: {
+    type: String,
+    required: true,
+  },
+  type: {
+    default: 'text',
+    enum: ['text', 'video', 'image', 'sound', 'file'],
+    type: String,
+  },
+  createdAt: {
+    default: Date.now,
+    type: Number
+  },
 });
 
-module.exports = mongoose.model('Message', messageSchema);
+module.exports = model('Message', messageSchema);

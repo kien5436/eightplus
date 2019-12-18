@@ -1,9 +1,11 @@
-const mongoose = require('mongoose');
+const { Schema, model } = require('mongoose');
 
-const tokenSchema = mongoose.Schema({
-
-	_id: mongoose.ObjectId,
-	exp: Number,
+const tokenSchema = Schema({
+  userId: Schema.Types.ObjectId,
+  refreshToken: {
+    type: Map,
+    of: String,
+  },
 });
 
-module.exports = mongoose.model('BlacklistedToken', tokenSchema);
+module.exports = model('Token', tokenSchema);

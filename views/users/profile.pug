@@ -1,0 +1,177 @@
+extends ../templates/layout
+
+mixin formText(controlId, value)
+  .control
+    input.input(type='text' id=controlId class=(isDark ? 'has-background-dark has-text-grey-lighter' : '') value=value)
+  p.help.is-danger.is-hidden
+
+mixin formSelect(controlId, options)
+  .control
+    .select
+      select.is-capitalized(class=(isDark ? 'has-background-dark has-text-grey-light' : '') data-id=controlId autocomplete='off')
+        each option in options
+          option(value=option.realValue selected=option.selected)= option.value
+
+mixin formPassword(controlId)
+  .field
+    .control
+      input#oldPwd.input(type='password' placeholder=dict.profile.currentPass class=(isDark ? 'has-background-dark has-text-grey-light' : ''))
+  .field
+    .control
+      input.input(id=controlId type='password' placeholder=dict.profile.newPass class=(isDark ? 'has-background-dark has-text-grey-light' : ''))
+  p.help.is-danger.is-hidden
+
+mixin formToggler(dataFormInfo, dataFormUpdate, title = dict.profile.edit)
+  span.icon.button.form-toggler(
+    type='button'
+    title=title
+    data-form-info=dataFormInfo
+    data-form-update=dataFormUpdate
+    class = (isDark ? 'has-background-dark has-text-grey-light' : '')
+  )
+    i.icon-pencil
+
+mixin formFieldHorizontal(label, formInfo, formUpdate)
+  if 'hidden' !== formInfo.value
+    -
+      const sexOptions = [
+        {realValue: 'female', value: dict.profile.select.sex.female, selected: 'female' === user.sex},
+        {realValue: 'male', value: dict.profile.select.sex.male, selected: 'male' === user.sex},
+        {realValue: 'other', value: dict.profile.select.sex.other, selected: 'other' === user.sex}
+      ]
+      const showHideOptions = [
+        {realValue: 'false', value: dict.profile.select.hide.show, selected: !user.metaData.hidden.includes(formInfo.field)},
+        {realValue: 'true', value: dict.profile.select.hide.hide, selected: user.metaData.hidden.includes(formInfo.field)}
+      ]
+
+    .field.is-horizontal
+      .field-label= label
+      .field-body
+        p.formInfo(id=formInfo.id)= formInfo.value || dict.profile.notProvided
+        if currentUser.id == user._id
+          .formUpdate.is-hidden(id=formUpdate.id class=(formUpdate.type !== 'password') ? 'is-flex' : '')
+            case formUpdate.type
+              when 'select': +formSelect(formUpdate.controlId, sexOptions)
+              when 'password': +formPassword(formUpdate.controlId)
+              default: +formText(formUpdate.controlId, formInfo.value)
+            if 'password' !== formUpdate.type
+              +formSelect(formUpdate.controlId, showHideOptions)
+          +formToggler(formInfo.id, formUpdate.id)
+
+block js
+  script(async src='/socket.io/socket.io.js')
+
+block content
+
+  include ../templates/home-aside
+
+  section.section
+    .columns
+      .column.is-3-desktop.is-offset-1
+        .box(class = isDark ? 'has-text-grey-lighter' : '')
+          figure.image.is-128x128
+            img.is-rounded(src=user.avatar['x128'])
+            if currentUser.id == user._id
+              figcaption.has-text-grey-lighter.is-flex.is-size-7(data-modal='updateAvatar')
+                span.icon.is-block.is-small
+                  i.icon-picture
+                span= dict.profile.updateAvatar
+          p.title.is-5(class = isDark ? 'has-text-grey-lighter' : '')= user.name
+          if currentUser.id == user._id
+            div
+              label.switch(
+                class = isDark ? 'has-text-grey-lighter' : ''
+                class = user.isOnline ? 'active' : ''
+              )= dict.profile.showOnlineStatus
+                input.is-hidden(type="checkbox" name="online_status" checked=user.isOnline)
+        form.box#socialForm(class = isDark ? 'has-text-grey-lighter' : '')
+          p.heading(class = isDark ? 'has-text-grey-lighter' : '')= dict.profile.otherContacts
+            if currentUser.id == user._id
+              +formToggler('socialInfo', 'socialUpdate', dict.profile.addNewContact)
+
+          #socialInfo.formInfo
+            if user.metaData.socialAccount
+              each acc, site in user.metaData.socialAccount
+                p
+                  span.icon(class = isDark ? 'has-text-grey-light' : '')
+                    i(class='icon-'+site)
+                  a.has-text-link(href=acc)= acc
+          if currentUser.id == user._id
+            #socialUpdate.formUpdate.is-hidden
+              .field
+                +formText('socialAccount', `is-fullwidth is-small ${isDark ? 'has-background-dark has-text-grey-lighter' : ''}`)
+              .field.is-grouped.is-grouped-right
+                .control
+                  button.button.is-small.has-text-weight-bold.has-background-blue2.has-text-light(type='submit')= dict.profile.btnSave
+                .control
+                  button.button.is-small.has-text-weight-bold(type='button' class = (isDark ? 'has-background-dark has-text-grey-light' : ''))= dict.profile.btnCancel
+
+      .column.is-7-desktop
+        .box(class = isDark ? 'has-text-grey-lighter' : '')
+          p.heading= dict.profile.headInfo
+          form#infoForm
+            -
+              const label = [dict.profile.fieldId, dict.profile.fieldEmail,dict.profile.fieldPhone, dict.profile.fieldDob, dict.profile.fieldSex, dict.profile.fieldPass]
+              const formInfo = [
+                {id: 'infoId', value: user.aliasId || user._id, field: 'id'},
+                {id: 'infoEmail', value: user.email, field: 'email'},
+                {id: 'infoPhone', value: user.phone, field: 'phone'},
+                {id: 'infoDob', value: user.dob, field: 'dob'},
+                {id: 'infoSex', value: user.sex, field: 'sex'},
+                {id: 'infoPwd', value: '*****', field: 'password'},
+              ]
+              const formUpdate = [
+                {id: 'updateId', controlId: 'id'},
+                {id: 'updateEmail', controlId: 'email'},
+                {id: 'updatePhone', controlId: 'phone'},
+                {id: 'updateDob', controlId: 'dob'},
+                {id: 'updateSex', controlId: 'sex', type: 'select'},
+                {id: 'updatePwd', controlId: 'password', type: 'password'},
+              ]
+            - for (let i = 0; i < label.length; i++)
+              +formFieldHorizontal(label[i], formInfo[i], formUpdate[i])
+
+            if currentUser.id == user._id
+              #actionInfo.field.is-grouped.is-grouped-right.is-hidden
+                .control
+                  button.button.is-small.has-text-weight-bold.has-background-blue2.has-text-light(type='submit')= dict.profile.btnSaveAll
+                .control
+                  button.button.is-small.has-text-weight-bold(type='button' class = (isDark ? 'has-background-dark has-text-grey-light' : ''))= dict.profile.btnCancel
+
+          if currentUser.id == user._id
+            hr(class = isDark ? 'has-background-grey' : 'has-background-grey-lighter')
+            .columns
+              .column.is-narrow.is-offset-6
+                button.button(type='button' class = (isDark ? 'has-background-dark has-text-grey-light' : ''))= dict.profile.btnDeactive
+              .column.is-narrow
+                button.button.is-danger(type='button')= dict.profile.btnDeleteAcc
+
+  .modal#updateAvatar
+    .modal-background
+    form.modal-card
+      header.modal-card-head
+        p.modal-card-title.is-size-6(class = isDark ? 'has-text-grey-lighter' : '') Update avatar
+        button.delete(type='button' aria-label='close')
+      section.modal-card-body.is-clipped
+        .columns
+          .column.is-narrow
+            figure.image.is-128x128
+              img(src='https://placekitten.com/128')
+          .column.has-scrollbar
+              .file
+                label.file-label
+                  input.file-input(type='file' name='avatar')
+                  span.file-cta(class = isDark ? 'has-text-grey-light has-background-dark' : '')
+                    span.file-icon
+                      i.icon-picture
+                    span.file-label Upload photo
+                  span.file-name(class = isDark ? 'has-text-grey' : '') file-name.jpg
+              p(class = isDark ? 'has-text-grey-lighter' : '') Suggested photos
+              .columns.is-multiline.is-variable.is-1
+                - for (let i = 0; i < 10; i++)
+                  .column.is-narrow.is-3-tablet
+                    figure.image.is-96x96
+                      img(src='https://placekitten.com/96')
+      footer.modal-card-foot
+        button.button.has-background-blue2.has-text-light(type='submit') Save
+        button.button(type='button' class = isDark ? 'has-background-dark has-text-grey-lighter' : '') Cancel

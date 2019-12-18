@@ -1,0 +1,59 @@
+mixin menuItem({ url, text, iconName, name })
+  li
+    a.tooltip.has-tooltip-right(
+      href=url
+      data-tooltip=text
+      class=(!isDark ? 'is-tooltip-blue4' : '')
+      class=(name === activeRoute ? 'is-active' : '')
+    )
+      if name === 'home'
+        figure.image.is-32x32
+          img(src='/assets/images/d15ae.png')
+      else
+        - const attr = {'data-badge': ['chat', 'contacts'].includes(name) ? '100' : undefined}
+        span.icon.is-size-4.is-medium(
+          class = (isDark ? 'has-text-grey-light' : 'has-text-light')
+          class = (['chat', 'contacts'].includes(name) ? 'has-badge-bottom has-badge-danger has-badge-rounded' : '')
+        )&attributes(attr)
+          i(class=`icon-${iconName}`)
+
+- let menuList
+if !currentUser.id
+  -
+    menuList = [{
+        url: '/',
+        text: dict.aside.home,
+        name: 'home'
+      }]
+else
+  -
+    menuList = [{
+        url: '/user/' + currentUser.id,
+        text: dict.aside.profile,
+        iconName: 'user',
+        name: 'profile'
+      }, {
+        url: '/',
+        text: dict.aside.home,
+        name: 'home'
+      }, {
+        url: '/t',
+        text: dict.aside.message,
+        iconName: 'chat',
+        name: 'chat'
+      }, {
+        url: `/user/${currentUser.id}/contacts`,
+        text: dict.aside.contacts,
+        iconName: 'contacts',
+        name: 'contacts'
+      }, {
+        url: '#',
+        text: dict.aside.settings,
+        iconName: 'cog',
+        name: 'settings'
+      }]
+
+aside.menu
+  ul.menu-list
+    each item in menuList
+      +menuItem(item)

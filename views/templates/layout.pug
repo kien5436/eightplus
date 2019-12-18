@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport' content='width=device-width initial-scale=1.0')
+    meta(http-equiv='X-UA-Compatible' content='ie=edge')
+    title #{ dict.title || dict[activeRoute]['title'] }
+
+    link(rel='apple-touch-icon' sizes='180x180' href='/assets/images/060a1.png')
+    link(rel='icon' type='image/png' sizes='32x32' href='/assets/images/7a690.png')
+    link(rel='icon' type='image/png' sizes='16x16' href='/assets/images/a1b57.png')
+    link(rel='manifest' href='/assets/44fe1.webmanifest')
+    link(rel='mask-icon' href='/assets/fonts/safari-pinned-tab.svg' color='#5bbad5')
+    meta(name='msapplication-TileColor' content='#da532c')
+    meta(name='theme-color' content='#fff')
+
+    link(rel='preload' href='/assets/fonts/Nunito-400.woff2' as='font' type='font/woff2' crossorigin)
+    link(rel='preload' href='/assets/fonts/Nunito-700.woff2' as='font' type='font/woff2' crossorigin)
+    each path in css
+      link(rel='stylesheet' href=path)
+
+  - const isDark = true
+  body(class = isDark ? 'dark' : '')
+    noscript This page requires JavaScript to display
+    block content
+    block js
+    each path in js
+      script(async src=path)

@@ -1,166 +1,166 @@
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 
-const Room = require('../../models/room');
-const User = require('../../models/user');
-const error = require('../../helpers/error');
+// const Room = require('../../models/room');
+// const User = require('../../models/user');
+// const error = require('../../helpers/error');
 
-exports.delete = (req, res, next) => {
+// exports.delete = (req, res, next) => {
 
-	Room
-		.deleteOne({ _id: req.params.id })
-		.then(result => {
+// 	Room
+// 		.deleteOne({ _id: req.params.id })
+// 		.then(result => {
 
-		})
-		.catch(next);
-};
+// 		})
+// 		.catch(next);
+// };
 
-exports.update = (req, res, next) => {
+// exports.update = (req, res, next) => {
 
-	if ( !/^([a-z0-9]){24}$/i.test(req.params.id) || (!req.body.name && !req.body.uid) )
-		throw error('', { status: 204 });
+// 	if ( !/^([a-z0-9]){24}$/i.test(req.params.id) || (!req.body.name && !req.body.uid) )
+// 		throw error('', { status: 204 });
 
-	let newMems = Promise.resolve(null), uid = [];
-	
-	if (!!req.body.uid && req.body.uid.trim().length > 0) {
+// 	let newMems = Promise.resolve(null), uid = [];
 
-		uid = JSON.parse(req.body.uid);
-		uid.push(req.body.tokenPayload.uid);
+// 	if (!!req.body.uid && req.body.uid.trim().length > 0) {
 
-		for (let i = uid.length; --i >= 0;)
-			if ( !/^([a-z0-9]){24}$/i.test(uid[i]) )
-				uid.splice(i, 1);
+// 		uid = JSON.parse(req.body.uid);
+// 		uid.push(req.body.tokenPayload.uid);
 
-		newMems = User
-			.find({ _id: { $in: uid } })
-			.select('nickname')
-			.then(users => {
+// 		for (let i = uid.length; --i >= 0;)
+// 			if ( !/^([a-z0-9]){24}$/i.test(uid[i]) )
+// 				uid.splice(i, 1);
 
-				const mems = [];
+// 		newMems = User
+// 			.find({ _id: { $in: uid } })
+// 			.select('nickname')
+// 			.then(users => {
 
-				for (let i = users.length; --i >= 0;)
-					if (users[i] !== null) {
+// 				const mems = [];
 
-						mems.push({
-							_id: users[i]._id,
-							nickname: users[i].nickname,
-							role: (users.length - 1 === i) ? 'admin' : 'member'
-						});
-					}
+// 				for (let i = users.length; --i >= 0;)
+// 					if (users[i] !== null) {
 
-				return mems;
-			});
-	}
+// 						mems.push({
+// 							_id: users[i]._id,
+// 							nickname: users[i].nickname,
+// 							role: (users.length - 1 === i) ? 'admin' : 'member'
+// 						});
+// 					}
 
-	const room = Room
-		.findById(req.params.id)
-		.select('name users')
-		.then(room => {
+// 				return mems;
+// 			});
+// 	}
 
-			if (room === null) return Promise.reject( error('Conversation not found') );
+// 	const room = Room
+// 		.findById(req.params.id)
+// 		.select('name users')
+// 		.then(room => {
 
-			const oldUid = [];
-			for (let i = room.users.length; --i >= 0;)
-				oldUid.push(room.users[i]._id);
+// 			if (room === null) return Promise.reject( error('Conversation not found') );
 
-			return { room, oldUid: oldUid };
-		});
+// 			const oldUid = [];
+// 			for (let i = room.users.length; --i >= 0;)
+// 				oldUid.push(room.users[i]._id);
 
-	Promise.all([newMems, room])
-	.then(result => {
+// 			return { room, oldUid: oldUid };
+// 		});
 
-		const newMems = result[0],
-				oldUid = result[1] && result[1].oldUid || null,
-				room = result[1] && result[1].room || null;
-		let changed = false;
+// 	Promise.all([newMems, room])
+// 	.then(result => {
 
-		if (req.body.name && room.name !== req.body.name && req.body.name.trim().length > 0) {
+// 		const newMems = result[0],
+// 				oldUid = result[1] && result[1].oldUid || null,
+// 				room = result[1] && result[1].room || null;
+// 		let changed = false;
 
-			changed = true;
-			room.name = req.body.name;
-		}
+// 		if (req.body.name && room.name !== req.body.name && req.body.name.trim().length > 0) {
 
-		if (newMems !== null) {
+// 			changed = true;
+// 			room.name = req.body.name;
+// 		}
 
-			if (uid.length > 0 && oldUid.length !== uid.length) {
+// 		if (newMems !== null) {
 
-				changed = true;
-				room.users = newMems;
-			}
-			else {
-				uid.sort(); oldUid.sort();
-				for (let i = uid.length; --i >= 0;)
-					if (uid[i] !== oldUid[i]) {
+// 			if (uid.length > 0 && oldUid.length !== uid.length) {
 
-						changed = true;
-						room.users = newMems;
-						break;
-					}
-			}
-		}
+// 				changed = true;
+// 				room.users = newMems;
+// 			}
+// 			else {
+// 				uid.sort(); oldUid.sort();
+// 				for (let i = uid.length; --i >= 0;)
+// 					if (uid[i] !== oldUid[i]) {
 
-		changed && room.save();
+// 						changed = true;
+// 						room.users = newMems;
+// 						break;
+// 					}
+// 			}
+// 		}
 
-		res.json({
-			ok: true,
-			result: {
-				name: req.body.name,
-				members: newMems || room.users
-			}
-		});
-	})
-	.catch(next);
-};
+// 		changed && room.save();
 
-exports.create = (req, res, next) => {
+// 		res.json({
+// 			ok: true,
+// 			result: {
+// 				name: req.body.name,
+// 				members: newMems || room.users
+// 			}
+// 		});
+// 	})
+// 	.catch(next);
+// };
 
-	const uid = JSON.parse(req.body.uid);
-	uid.push(req.body.tokenPayload.uid);
+// exports.create = (req, res, next) => {
 
-	// remove malform ids
-	for (let i = uid.length; --i >= 0;)
-		if ( !/^([a-z0-9]){24}$/i.test(uid[i]) )
-			uid.splice(i, 1);
+// 	const uid = JSON.parse(req.body.uid);
+// 	uid.push(req.body.tokenPayload.uid);
 
-	User
-		.find({ _id: { $in: uid } })
-		.select('nickname')
-		.then(users => {
+// 	// remove malform ids
+// 	for (let i = uid.length; --i >= 0;)
+// 		if ( !/^([a-z0-9]){24}$/i.test(uid[i]) )
+// 			uid.splice(i, 1);
 
-			const mems = [];
+// 	User
+// 		.find({ _id: { $in: uid } })
+// 		.select('nickname')
+// 		.then(users => {
 
-			for (let i = users.length; --i >= 0;)
-				if (users[i] !== null) {
+// 			const mems = [];
 
-					mems.push({
-						_id: users[i]._id,
-						nickname: users[i].nickname,
-						role: (users.length - 1 === i) ? 'admin' : 'member'
-					});
-				}
+// 			for (let i = users.length; --i >= 0;)
+// 				if (users[i] !== null) {
 
-			return mems;
-		})
-		.then(users => {
+// 					mems.push({
+// 						_id: users[i]._id,
+// 						nickname: users[i].nickname,
+// 						role: (users.length - 1 === i) ? 'admin' : 'member'
+// 					});
+// 				}
 
-			// if users.length = 2 then create conversation for two people
-			// if users.length = 1 so they are talking to themselves
+// 			return mems;
+// 		})
+// 		.then(users => {
 
-			const rid = mongoose.Types.ObjectId();
-			const room = new Room({
-				_id: rid,
-				name: req.body.name || 'Conversation ' + JSON.stringify(rid).replace(/[a-z"]/gi, ''),
-				users: users
-			});
+// 			// if users.length = 2 then create conversation for two people
+// 			// if users.length = 1 so they are talking to themselves
 
-			return room.save();
-		})
-		.then(newRoom => {
+// 			const rid = mongoose.Types.ObjectId();
+// 			const room = new Room({
+// 				_id: rid,
+// 				name: req.body.name || 'Conversation ' + JSON.stringify(rid).replace(/[a-z"]/gi, ''),
+// 				users: users
+// 			});
 
-			res.status(201).json({
-				id: newRoom._id,
-				members: newRoom.users,
-				name: newRoom.name,
-			});
-		})
-		.catch(next);
-};
+// 			return room.save();
+// 		})
+// 		.then(newRoom => {
+
+// 			res.status(201).json({
+// 				id: newRoom._id,
+// 				members: newRoom.users,
+// 				name: newRoom.name,
+// 			});
+// 		})
+// 		.catch(next);
+// };

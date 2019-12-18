@@ -1,33 +1,18 @@
 const Token = require('../api/token');
+const error = require('../../helpers/error');
 
-module.exports = (req, res, next) => {
-// console.log(req.url, req.baseUrl, req.method);
-	Token
-		.isValid(req.headers.authorization.split(' ')[1])
-		.then(payload => {
+module.exports = async (req, res, next) => {
 
-			if (!payload) {
+  let token = req.signedCookies.token;
 
-				const e = new Error('Invalid token');
-				e.status = 401;
-				throw e;
-			}
-			req.body.tokenPayload = payload;
-			next();
-		})
-		.catch(next);
+  if (req.header('Authorization'))
+    token = req.header('Authorization').split(' ')[1];
 
-	// try {
-	// 	const payload = jwt.verify(, process.env.JWT_SECRET);
-	// 	req.payload = payload;
-	// 	next();
-	// }
-	// catch(err) {
-	// 	console.error(err);
-	// 	res.status(401).json({
-	// 		ok: false,
-	// 		message: 'Unauthorized'
-	// 	});
-	// }
+  try {
+    if (!token) throw error('No token provided', { status: 401 });
+
+    req.user = await Token.isValid(token);
+    next();
+  }
+  catch (err) { next(err) }
 };
-

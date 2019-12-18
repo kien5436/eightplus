@@ -1,0 +1,53 @@
+extends ../templates/layout
+
+mixin tile(type = 'user')
+  - for (let j = 0; j < 6; j++)
+    .column.is-half-tablet.is-2-desktop
+      article.card
+        .card-image(data-modal='modal-user-info')
+          figure.image
+            img.bg-avatar(src='https://placekitten.com/360/360' data-id='user_id')
+        .card-content
+          p.title.is-6(title='this is a very very long username' data-modal='modal-user-info' class = isDark ? 'has-text-grey-lighter' : ''  data-id='user_id') this is a very very long #{type}
+          if type === 'group'
+            p.subtitle.is-7(class = isDark ? 'has-text-grey-light' : '') 4k members
+          a.button.is-small.is-fullwidth(role='button' class = isDark ? 'has-background-dark has-text-grey-lighter' : '')
+            span.icon
+              i.icon-mail
+            span send message
+          button.button.is-small.is-fullwidth(type='button' class = isDark ? 'has-background-dark has-text-grey-lighter' : '')
+            span.icon
+              i.icon-user-add
+            span add to contacts
+
+block content
+
+  include ../templates/home-aside
+
+  section.section
+    form#searchEverything
+      .field
+        .control.has-icons-right
+          input.input(type='text' name='searchBar' list='peopleAndGroup' placeholder='Find everything (people, group, etc)')
+          span.icon.is-right
+            i.icon-search
+    datalist#peopleAndGroup
+      - for (let i = 0; i < 10; i++)
+        option(value=('something ' + i))
+
+  section.section
+    .tabs.is-centered.is-small
+      ul
+        li(data-tab-id='people')
+          a(class = isDark ? 'has-text-grey-light' : '') People
+        li.is-active(data-tab-id='group')
+          a(class = isDark ? 'has-text-danger' : '') Groups
+
+    - const tabIds = ['people', 'group']
+    each tabId in tabIds
+      div(data-container-id=tabId class = (tabId !== 'group' ? 'is-hidden' : ''))
+        - for (let i = 0; i < 2; i++)
+          .columns.is-multiline
+            +tile(tabId)
+
+  include ../templates/modal-user-info

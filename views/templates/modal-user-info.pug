@@ -1,0 +1,45 @@
+.modal#modal-user-info
+  .modal-background
+  .modal-card
+    header.modal-card-head.is-clipped
+      p.modal-card-title.is-size-6(class = isDark ? 'has-text-grey-lighter' : '') Infomation
+      button.delete(type='button' aria-label='close')
+    section.modal-card-body
+      figure.image.is-96x96
+        img.is-rounded(src='https://placekitten.com/96')
+      p.title.is-5(class = isDark ? 'has-text-grey-lighter' : '') Username
+      ul.has-scrollbar(class = isDark ? 'has-text-grey-lighter' : '')
+        li.columns
+          .column.is-4 ID
+          .column qwertyuiop
+        li.columns
+          .column.is-4 Date of birth
+          .column 28/04/1997
+        li.columns
+          .column.is-4 Sex
+          .column Male
+        li.columns
+          .column.is-4 Email
+          .column kiendp00@gmail.com
+        li.columns
+          .column.is-4 Phone
+          .column 034463582
+        li
+          p Other contacts
+          p
+            span.icon
+              i.icon-facebook
+            a.has-text-link https://www.facebook.com/phamkien00
+          p
+            span.icon
+              i.icon-twitter
+            a.has-text-link https://www.facebook.com/phamkien00
+    footer.modal-card-foot
+      a.button.is-small(role='button' class = isDark ? 'has-background-dark has-text-grey-lighter' : '')
+          span.icon
+            i.icon-mail
+          span send message
+      button.button.is-small(type='button' class = isDark ? 'has-background-dark has-text-grey-lighter' : '')
+        span.icon
+          i.icon-user-add
+        span add to contacts
