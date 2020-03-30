@@ -1,0 +1,246 @@
+extends ../templates/layout
+
+mixin menuOption(menuLabel, items)
+  p.menu-label.is-clearfix(class = isDark ? 'has-text-grey-lighter' : '')= menuLabel
+    span.icon.is-size-5.is-pulled-right
+      i.icon-angle-down
+  ul.menu-list(class = isDark ? 'has-text-grey-lighter' : '')
+    if items.length > 0
+      each item in items
+        li
+          if item.isFile
+            a(class = (isDark ? 'has-text-danger' : 'has-text-link') href='' download)
+              span.icon
+                i(class=`icon-${item.icon}`)
+              span= item.label
+          else
+            .chat-option
+              span.icon
+                i(class=`icon-${item.icon}`)
+              span= item.label
+    else
+      .tile.is-parent
+        - for (let i = 0; i < 6; i++)
+          .tile.is-child.is-4
+            .shared-image(style='background-image: url(/assets/images/mess-light.png)')
+
+mixin messageAvatar()
+  a.message-avatar.column.is-1(href='/link-to-conversation')
+    figure.image.is-32x32
+      img.is-rounded(src='/assets/images/mess-light.png')
+
+mixin messageOption(right)
+  .message-option.column.is-2(
+    class = right ? 'has-text-right' : ''
+    class = isDark ? 'has-text-grey-light' : ''
+  )
+    span.icon(title=dict.chat.tooltipReply)
+      i.icon-reply
+    span.icon(title=dict.chat.tooltipForward)
+      i.icon-reply
+    span.icon(title=dict.chat.tooltipMore)
+      i.icon-cog
+
+mixin messageFile({type, src} = file)
+  case type
+    when 'video'
+      video.player(width='280' height='160' playsinline)
+        source(src=src type='video/mp4')
+    when 'audio'
+      audio.player(controls)
+        source(src=src type='audio/mp3')
+    when 'image'
+      figure.image
+        img(src= src)
+
+//-
+  pos = 0: left
+  1: right
+  2: center
+mixin message(messages, pos = 0)
+  li.message.columns.is-vcentered(class = (pos === 1 ? 'is-right' : ''))
+    if pos === 0
+      +messageAvatar()
+    .column.message-wrapper
+      each message in messages
+        .columns.is-vcentered.is-variable.is-1(class = (pos === 2) ? 'is-centered' : '')
+          if typeof message === 'string'
+            .message-content.column.is-narrow(
+              class = (pos === 2) ? 'has-text-grey is-size-7 sys-message' : ''
+              class = isDark ? 'has-text-grey-lighter' : ''
+            )= message
+          else
+            .message-content.column.is-narrow.has-file
+              +messageFile(message)
+          if pos < 2
+            +messageOption(!!pos)
+
+mixin filePreview(type = '')
+  case type
+    when 'image'
+      figure.image.is-96x96.is-inline-block.is-relative
+        button.delete(type='button')
+        img(src="https://unsplash.it/96")
+    default
+      .box.is-inline-block.is-marginless(class = isDark ? 'has-background-dark has-text-grey-lighter' : '')
+        .media
+          .media-left
+            span.icon.is-large.is-size-4
+              i.icon-file
+          .media-content
+            b mp3
+            p.text-ellipsis Lorem ipsum
+          .media-right
+            button.delete(type='button')
+
+mixin megaInput()
+  .chat-input
+    .upload-preview.has-scrollbar
+      - for (let i = 0; i < 5; ++i)
+        +filePreview
+    .columns.is-variable.is-0.is-vcentered
+      .chat-input_content.column
+        .chat-input_placeholder.is-hidden(class = isDark ? 'has-text-grey-light' : '')= dict.chat.phEditor
+        #richInput.chat-input_message.has-scrollbar(contenteditable='' data-offset-key='0' role='textbox' class = isDark ? 'has-text-grey-light' : '')
+      ul.chat-input_extra.column.is-narrow
+        li.is-inline-block(title=dict.chat.tooltipEmoji)
+          .icons.dropdown.is-up
+            .dropdown-trigger
+              button.button.is-shadowless.is-borderless.is-large(type='button' aria-haspopup='true' class = isDark ? 'has-background-transparent' : '')
+                span.icon(class = isDark ? 'has-text-grey-lighter' : '')
+                  i.icon-smile
+            .dropdown-menu(role='menu')
+              .dropdown-content.box(class = isDark ? 'has-background-dark' : '')
+                .columns.is-multiline
+                  .column.has-scrollbar.emoji#emojiPalette
+                    //- - const emoji = ['smile', 'angry', 'dizzy', 'flushed', 'frown', 'frown-open', 'grimace', 'grin', 'grin-beam', 'grin-beam-sweat', 'grin-hearts', 'grin-squint', 'grin-squint-tears', 'grin-stars', 'grin-tongue', 'grin-tongue-squint', 'grin-tongue-wink', 'grin-wink', 'kiss', 'kiss-beam', 'kiss-wink-heart', 'laugh', 'laugh-beam', 'laugh-squint', 'meh', 'meh-blank', 'tired', 'meh-rolling-eyes', 'sad-cry', 'sad-tear', 'smile-beam', 'smile-wink', 'surprise']
+                    - const emoji = ['🙂', '😀', '😄', '😆', '😅', '😂', '🤣', '😊', '☺️', '😌', '😉', '😏', '😍', '😘', '😗', '🤑', '😎', '🤓', '🤤', '😋', '😜', '😝', '😛', '😈', '😇', '🙃', '😳', '🤗', '😚', '😙', '😒', '🙁', '☹️', '😞', '😔', '😖', '😓', '😢', '😢', '😭', '😟', '😣', '😩', '😫', '😕', '😱', '😰', '😨', '😧', '😲', '😯', '😑', '😐', '🤐', '😶', '😡', '😠', '😤', '🙄', '🤔', '😪', '😴', '😬', '🤥', '👻', '💀', '👽', '💩', '🤧', '🤒', '😷', '🤕', '😵', '🤢', '👿', '♥️', '💔', '🐱', '🐶', '🐰', '🐭', '🐹', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐗', '🐷', '🐺', '🐏', '🦄', '🦌', '🐤', '🐧']
+                    - for (name of emoji)
+                      span.icon.is-medium.is-size-4(class = isDark ? 'has-text-grey-lighter' : '')
+                        i.fa= name
+        li.is-inline-block(style='vertical-align:top' title=dict.chat.tooltipAttach)
+          .file.is-large
+            label.file-label
+              input#attachment.file-input(type='file')
+              span.file-cta.is-borderless.is-shadowless(class = isDark ? 'has-background-transparent' : '')
+                span.file-icon.is-marginless(class = isDark ? 'has-text-grey-lighter' : '')
+                  i.icon-attach
+        li.is-inline-block(title=dict.chat.tooltipSend)
+          button#sendMessage.button.is-shadowless.is-borderless.is-large(type='button' class = isDark ? 'has-background-transparent' : '')
+            span.icon(class = isDark ? 'has-text-grey-lighter' : '')
+              i.icon-direction-outline
+
+block js
+  script(async src='/socket.io/socket.io.js')
+
+block content
+
+  html.is-clipped
+
+  include ../templates/home-aside
+
+  .columns.is-variable.is-0
+    .column.is-4-tablet.is-3-desktop
+      nav.panel.full-screen-height
+        .panel-heading(class = isDark ? 'has-text-grey-lighter' : '')
+          .columns.is-variable.is-2
+            .column
+              span.is-capitalized messpresso
+            .column.has-text-right
+              span.icon.tooltip.has-tooltip-bottom(class=(!isDark ? 'is-tooltip-blue4' : '') data-tooltip=dict.chat.tooltipNewMsg)
+                i.icon-mail
+        .panel-block
+          p.control
+            input.input.is-small(type='text' placeholder=dict.chat.phFindPerson)
+        .panel-tabs
+          a.is-capitalized.is-active(class = isDark ? 'has-text-danger' : '')= dict.chat.txtAll
+          a.is-capitalized(class = isDark ? 'has-text-grey-light' : '')= dict.chat.txtUnread
+          a.is-capitalized(class = isDark ? 'has-text-grey-light' : '')= dict.chat.txtRequests
+        .has-scrollbar
+          - for (let i = 0; i < 7; i++)
+            .panel-block
+              a.user.columns.is-vcentered.is-variable.is-1(href='#')
+                .column.is-narrow
+                  figure.image.is-48x48.user-avatar
+                    img.is-rounded(src='/assets/images/mess-light.png')
+                    span.status(class = (i % 2 === 0) ? 'active' : '')
+                .column
+                  p.title.is-6(class = isDark ? 'has-text-grey-lighter' : '') User 1
+                  p.user-message.subtitle.is-6.has-text-weight-bold(class = isDark ? 'has-text-grey-lighter' : '') sample very longgggg message
+                .column.is-narrow.has-text-right
+                  p.subtitle.is-7(class = isDark ? 'has-text-grey-light' : '') 30h ago
+                  span.icon.is-small(class = isDark ? 'has-text-grey-light' : 'has-text-grey')
+                    i.icon-mute
+              span.icon(class = isDark ? 'has-text-grey-light' : '')
+                i.icon-cog
+    .column.is-8-tablet.is-9-desktop
+      .hero.full-screen-height
+        .hero-head
+          .columns.is-variable.is-0
+            .column
+              p.title.is-6(class = isDark ? 'has-text-grey-lighter' : '') User 1
+              p.subtitle.is-7(class = isDark ? 'has-text-grey-lighter' : '')= dict.chat.txtStatusOn
+            .column(class = isDark ? 'has-text-grey-lighter' : '')
+              span.icon.is-size-4(title= dict.chat.tooltipVoice)
+                i.icon-phone
+              span.icon.is-size-4(title=dict.chat.tooltipVideo)
+                i.icon-videocam
+              span.icon.is-size-4(title=dict.chat.tooltipOptions)
+                i.icon-info
+        .hero-body
+          .columns.is-variable.is-0
+            .column.tile.is-vertical.is-8-desktop
+              .chat-content.has-scrollbar
+                ul.messages
+                  +message(['hello there :)'])
+                  +message(['oh! long time no see', 'how have you been?'], 1)
+                  +message([{type: 'image', src: '/assets/images/mess-light.png'}])
+                  +message(['i\'ve come home from vacation', 'it\'s great'])
+                  +message(['This is a message from system'], 2)
+                  //- +message(['you looks so beautiful', {type: 'audio', src: 'http://www.largesound.com/ashborytour/sound/AshboryBYU.mp3'}, {type: 'video', src: 'http://afterglowplayer.com/sandbox/v1/afterglow_local_hd.mp4'}], 1)
+                  +message(['what\'s that?'])
+                  +message(['nevermind'], 1)
+                  +message(['hmmm'])
+                  +message(['...'], 1)
+                  +message(['what\'s wrong with you?'])
+                  +message([{type: 'image', src: '/assets/images/mess-light.png'}], 1)
+              +megaInput()
+            #menuOptions.column.is-4-desktop.has-scrollbar
+              .menu
+                -
+                  const options =  [
+                    {
+                      menuLabel: dict.chat.menuLabelOptions,
+                      items: [
+                        {icon: 'search', isFile: false, label: dict.chat.optLabelSearch},
+                        {icon: 'pencil', isFile: false, label: dict.chat.optLabelChangeName},
+                        //- {icon: 'cog', isFile: false, label: dict.chat.optLabelChangeName},
+                        {icon: 'bell', isFile: false, label: dict.chat.optLabelNoti},
+                        {icon: 'block', isFile: false, label: dict.chat.optLabelBlock},
+                        {icon: 'color-palette', isFile: false, label: dict.chat.optLabelChangeColor},
+                      ]
+                    },
+                    {
+                      menuLabel: dict.chat.menuLabelFiles,
+                      items: [
+                        {icon: 'file', isFile: true, label: 'lorem ipsum'},
+                        {icon: 'file', isFile: true, label: 'something here'},
+                        {icon: 'file', isFile: true, label: 'hmm, here you are'},
+                        {icon: 'file', isFile: true, label: 'anything you want to display in Notifications'},
+                        {icon: 'file', isFile: true, label: 'i dont know what it is'},
+                      ]
+                    },
+                    {
+                      menuLabel: dict.chat.menuLabelPhotos,
+                      items: []
+                    }
+                  ]
+                each option in options
+                  +menuOption(option.menuLabel, option.items)
+
+  - const menuItems = ['Mute', 'Leave conversation', 'Block', 'Report', 'Delete']
+  .menu.contextMenu
+    ul.menu-list
+      each item in menuItems
+        li
+          a= item

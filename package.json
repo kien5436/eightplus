@@ -1,32 +1,76 @@
 {
-  "name": "eightplus",
-  "version": "1.0.0",
+  "name": "messpresso",
+  "version": "2.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "npx nodemon"
+    "build": "webpack --config webpack/config.prod.js",
+    "start": "cross-env NODE_ENV=production node index.js",
+    "dev": "cross-env NODE_ENV=development nodemon index.js",
+    "vstart": "cross-env NODE_ENV=production node index.vhost.js",
+    "vdev": "cross-env NODE_ENV=development node index.vhost.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com:shhlkien/eightplus.git"
+    "url": "git+ssh://git@github.com:shhlkien/messpresso.git"
   },
   "author": "Phạm Trung Kiên",
   "license": "MIT",
-  "homepage": "https://github.com/shhlkien/eightplus",
+  "homepage": "https://github.com/shhlkien/messpresso",
   "dependencies": {
-    "body-parser": "^1.18.3",
+    "bulma": "^0.8.0",
+    "bulma-badge": "^3.0.1",
+    "bulma-tooltip": "^3.0.2",
     "cookie-parser": "^1.4.3",
-    "express": "^4.16.4",
+    "datepickerx": "^1.0.5",
+    "express": "^4.17.1",
     "express-session": "^1.15.6",
-    "formidable": "^1.2.1",
-    "mongodb": "^3.1.13",
-    "nodemailer": "^5.1.1",
-    "pug": "^2.0.3",
-    "socket.io": "^2.2.0"
+    "faker": "^4.1.0",
+    "fastest-validator": "^0.6.19",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.5.5",
+    "morgan": "^1.9.1",
+    "multer": "^1.4.1",
+    "nodemailer": "^6.3.1",
+    "particles.js": "^2.0.0",
+    "plyr": "^3.5.6",
+    "pug": "^2.0.4",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-redux": "^7.1.3",
+    "react-router-dom": "^5.1.2",
+    "redux": "^4.0.5",
+    "redux-thunk": "^2.3.0",
+    "sharp": "^0.25.2",
+    "socket.io": "^2.2.0",
+    "ua-parser-js": "^0.7.21"
   },
   "devDependencies": {
-    "dotenv": "^6.2.0",
-    "nodemon": "^1.18.9"
+    "@babel/core": "^7.7.7",
+    "@babel/preset-env": "^7.7.7",
+    "@babel/preset-react": "^7.7.4",
+    "babel-loader": "^8.0.6",
+    "clean-webpack-plugin": "^3.0.0",
+    "cross-env": "^6.0.3",
+    "css-loader": "^3.0.0",
+    "dotenv": "^8.2.0",
+    "file-loader": "^5.0.2",
+    "mini-css-extract-plugin": "^0.8.0",
+    "node-sass": "^4.12.0",
+    "nodemon": "^2.0.1",
+    "optimize-css-assets-webpack-plugin": "^5.0.1",
+    "sass-loader": "^8.0.0",
+    "style-loader": "^1.0.0",
+    "vhost": "^3.0.2",
+    "webpack": "^4.35.0",
+    "webpack-cli": "^3.3.4",
+    "webpack-dev-middleware": "^3.7.0",
+    "webpack-manifest-plugin": "^2.0.4"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "node_modules/",
+      "src/"
+    ]
   }
 }

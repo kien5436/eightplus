@@ -1,70 +1,26 @@
-extends layout.pug
+<!DOCTYPE html>
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport' content='width=device-width initial-scale=1.0')
+    meta(http-equiv='X-UA-Compatible' content='ie=edge')
+    title Messpresso
 
-block css
-	link(rel='stylesheet' href='/asset/css/index.css')
-prepend css
-	if (ua.indexOf('Chrome') === 0 || ua.indexOf('Safari') === 0)
-		link(rel='preload' href='/asset/css/index.css' as='style')
-		link(rel='preload' href='/socket.io/socket.io.js' as='script')
+    link(rel='apple-touch-icon' sizes='180x180' href='/assets/images/27951.png')
+    link(rel='icon' type='image/png' sizes='32x32' href='/assets/images/0171b.png')
+    link(rel='icon' type='image/png' sizes='16x16' href='/assets/images/95dfb.png')
+    link(rel='manifest' href='/assets/42aa5.webmanifest')
+    link(rel='mask-icon' href='/assets/fonts/safari-pinned-tab.svg' color='#5bbad5')
+    meta(name='msapplication-TileColor' content='#1e1e1e')
+    meta(name='theme-color' content='#fff')
 
-prepend js
-	script(async src='/socket.io/socket.io.js')
-	script(async src='/asset/js/chat.min.js')
+    link(rel='preload' href='/assets/fonts/Nunito-400.woff2' as='font' type='font/woff2' crossorigin)
+    link(rel='preload' href='/assets/fonts/Nunito-700.woff2' as='font' type='font/woff2' crossorigin)
+    each path in css
+      link(rel='stylesheet' href=path)
 
-block content
-	.contact
-		.contact_header
-			.contact_header-setting
-				i.fa.fa-cog.fa-white
-				ul.setting.hidden
-					li.setting-item
-						a(href='/logout')=logout
-					li.setting-item.changeBg=changeBg
-					li.setting-item.changeLang=changeLang
-			.contact_header-title=contactTitle
-			.contact_header-search
-				input#findUser.btn(type='search' value='' placeholder=phSearch)
-		ul.contact_body
-			li.user
-				a(href='/t/hall')
-					span.user-name=hall
-					span.user-status.active
-			each user in users
-				li.user
-					a(href='/t/' + user._id)
-						span.user-name=user.username
-						span.user-status
-		
-	.chat
-		.chat_content
-			.chat_content-header
-				.user_info
-					.user_info-name=chatWith.username
-					.user_info-status
-						span.user-status.active
-						span=statusOn
-				.action
-					.action_info
-						i.fa.fa-ellipsis-v.fa-white#action_info-icon
-						ul.action_info-menu.hidden
-							li.action_info-menu-item ヽ（・＿・)ノ nothing here
-			ul.chat_content-body#messages
-		.chat_footer
-			input#rid(type='hidden' value=rid)
-			.input
-				textarea#editor(placeholder=phEditor autofocus)
-			.xtra_input
-				.xtra_input-icons
-					i.fa.fa-smile.fa-white#btn-emoji(title=titleEmoji)
-					.icons.hidden
-						.icons-palette
-							- for (let i = 0; i < icons.length; i++)
-								i.fa.fa-white(class=`fa-${ icons[i] }` data-ic=icons[i])
-				.xtra_input-file
-					label.fa.fa-paperclip.fa-white(title=titleAttach for='attachment')
-					input(type='file' id='attachment' multiple)
-				.xtra_input-send
-					i.fa.fa-send.fa-white#btn-send(title=titleSend)
-	
-	audio#bell
-		source(src='/file/sound/plucky.mp3' type='audio/mpeg')
+  body
+    noscript This page requires JavaScript to display
+    #root
+    each path in js
+      script(async src=path)

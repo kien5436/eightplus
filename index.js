@@ -1,74 +1,53 @@
-process.env.NODE_ENV = 'production';
-if (process.env.NODE_ENV !== 'production') dotenv = require('dotenv').config();
-const express = require('express'),
-app = express(),
-http = require('http').Server(app),
-io = require('socket.io')(http).sockets,
-bodyParser = require('body-parser'),
-cookieParser = require('cookie-parser')(),
-session = require('express-session'),
-MongoClient = require('mongodb').MongoClient,
-User = require('./api/User'),
-Dialog = require('./api/Dialog');
+if (process.env.NODE_ENV !== 'production') require('dotenv').config();
+const express = require('express');
+const app = express();
+const morgan = require('morgan');
+// const session = require('express-session');
+const { connect, set } = require('mongoose');
 
-const client = new MongoClient(process.env.DB_URL, { useNewUrlParser: true }),
-urlencodedParser = bodyParser.urlencoded({ extended: false }),
-jsonParser = bodyParser.json();
-let users = [];
+const server = require('./controllers/socket')(app);
+const routes = require('./routes');
 
-app.use(session({
-	secret: process.env.SS_SECRET,
-	resave: false,
-	saveUninitialized: true,
-	cookie: {
-		secure: false,
-		maxAge: parseInt(process.env.SS_MAXAGE)
-	}
-}));
-app.use('/asset', express.static('public', { maxAge: process.env.COOKIE_MAXAGE }));
-app.use('/file', express.static('upload', { maxAge: process.env.COOKIE_MAXAGE }));
+connect(process.env.DB_URL, {
+    useCreateIndex: true,
+    useFindAndModify: false,
+    useNewUrlParser: true,
+  })
+  .catch(console.error);
+set('debug', process.env.DB_DEBUG);
+
+if (process.env.NODE_ENV !== 'production') {
+
+  const webpackDevMiddleware = require('webpack-dev-middleware');
+
+  const config = require('./webpack/config.dev');
+  const compiler = require('webpack')(config);
+
+  app.use(webpackDevMiddleware(compiler, {
+    publicPath: config.output.publicPath,
+    clientLogLevel: 'silent',
+    serverSideRender: true,
+    stats: 'normal',
+    writeToDisk: false
+  }));
+}
+
 app.set('view engine', 'pug');
+app.use(morgan('dev'));
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+// app.use(session({
+//   secret: process.env.SS_SECRET,
+//   resave: false,
+//   saveUninitialized: true,
+//   cookie: {
+//     secure: process.env.COOKIE_SECURE,
+//     maxAge: parseInt(process.env.SS_MAXAGE)
+//   }
+// }));
 
-client.connect((err) => {
+app.use('/assets', express.static('assets', { maxAge: process.env.COOKIE_MAXAGE }));
+app.use('/files', express.static('uploads', { maxAge: process.env.COOKIE_MAXAGE }));
+app.use('/', routes);
 
-	if (err) console.error(err);
-
-	const db = client.db('eightplus'),
-	user = new User(db),
-	dialog = new Dialog(db);
-
-	app.get('/t/:id/', cookieParser, dialog.loadViewDialog);
-
-	app.get('/message/load', dialog.loadMessages);
-	app.post('/message/upload', dialog.upload);
-
-	app.get('/register', cookieParser, user.loadViewRegister);
-	app.post('/register', [cookieParser, urlencodedParser], user.register, user.loadViewRegister);
-
-	app.get(/\/(login)?$/, cookieParser, user.loadViewLogin);
-	app.post('/login', [cookieParser, urlencodedParser], user.login, user.loadViewLogin);
-
-	app.get('/logout', cookieParser, user.logout);
-
-	app.get('/reset', cookieParser, user.loadViewReset);
-	app.post('/reset', [cookieParser, urlencodedParser], user.resetPassword, user.loadViewReset);
-
-	app.get('/listUsers', user.listUsers);
-	
-	io.on('connection', (socket) => {
-
-		socket.on('join', (data) => {
-
-			socket.join(data.rid);
-			users = user.whoIsOnline(io, socket, users, data.uid);
-		});
-
-		dialog.transfer(io, socket);
-
-		socket.on('disconnect', (data) => { users = user.whoIsOnline(io, socket, users); });
-	});
-
-	app.use( (req, res) => res.render('404') );
-});
-
-http.listen(process.env.PORT);
+server.listen(process.env.PORT || 80, console.log(`server is running at ${process.env.HOST}:${process.env.PORT} (${process.env.NODE_ENV})`));

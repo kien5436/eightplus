@@ -1,0 +1,29 @@
+@import 'modal';
+
+.modal {
+  .image {
+    margin: auto;
+  }
+
+  .column,
+  p {
+    word-wrap: break-word
+  }
+
+  .title {
+    margin: 1rem auto;
+    text-align: center;
+  }
+
+  &-card-body .has-scrollbar {
+    max-height: 20rem;
+    overflow-x: hidden;
+  }
+
+  @media (min-width: 568px) {
+    &-card {
+      max-width: 25rem;
+      width: 50%;
+    }
+  }
+}

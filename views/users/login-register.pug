@@ -1,0 +1,46 @@
+extends ../templates/layout
+
+mixin field({type = 'text', name, placeholder, attrs = {autofocus: false}})
+  .field
+    .control
+      input.input.is-fullwidth.has-text-grey-lighter(name=name type=`${type}` placeholder=placeholder)&attributes(attrs)
+    p.help.is-danger.is-hidden
+
+block content
+  section.hero.is-fullheight#particles
+    .hero-body
+      form.box(method='post')
+        .logo
+        if isRegister
+          +field({name: 'name', placeholder: dict.phName, attrs: {autofocus: true}})
+        +field({name: 'email', placeholder: dict.phEmail, attrs: {autofocus: true}})
+        +field({name: 'password', type: 'password', placeholder: dict.phPassword})
+        if isRegister
+          +field({name: 'dob', placeholder: dict.phDob, attrs: {id: 'datePicker'}})
+          .field
+            .control
+              label.radio.has-text-grey-lighter
+                input(type='radio' name='sex' value='male' checked)
+                =  dict.sex.male
+              label.radio.has-text-grey-lighter
+                input(type='radio' name='sex' value='female')
+                = dict.sex.female
+              label.radio.has-text-grey-lighter
+                input(type='radio' name='sex' value='other')
+                = dict.sex.other
+            p.help.is-danger.is-hidden
+          .field
+            p.help.has-text-grey-lighter= dict.term['1']
+              a.has-text-link(href='#')= dict.term['2']
+        else
+          .field
+            a.has-text-link.is-size-7(href='#')= dict.forgotText
+        button.button.is-fullwidth.has-background-black.has-text-grey-lighter(type='submit')= dict.submitText
+        hr
+        p.help.has-text-grey-lighter= dict.askAccount
+          a.has-text-link(href=(isRegister ? '/login' : '/register'))= dict.referText
+
+      .menu
+        ul.menu-list
+          li.has-text-grey-lighter Vietnamese
+          li.has-text-grey-lighter English

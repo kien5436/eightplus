@@ -1,0 +1,40 @@
+extends ../templates/layout
+
+block content
+  html.is-clipped
+  body(class=(isDark ? 'dark full-screen-height has-scrollbar' : 'full-screen-height has-scrollbar'))
+
+  include ../templates/home-aside
+
+  section.section
+    form#searchEverything
+      .field
+        .control.has-icons-right
+          input.input(type='text' name='searchBar' list='peopleAndGroup' placeholder='Find a contact')
+          span.icon.is-right
+            i.icon-search
+    datalist#peopleAndGroup
+      - for (let i = 0; i < 10; i++)
+        option(value=('something ' + i))
+
+    if 'home' !== activeRoute
+      .tabs.is-centered.is-small
+        ul
+          li.is-active(data-tab-id='friends')
+            a(class = isDark ? 'has-text-danger' : '') Friends
+          li(data-tab-id='requested')
+            a(class = isDark ? 'has-text-grey-light' : '') Requested
+          li(data-tab-id='sentRequest')
+            a(class = isDark ? 'has-text-grey-light' : '') Sent requests
+          li(data-tab-id='blocked')
+            a(class = isDark ? 'has-text-grey-light' : '') Blocked
+
+  section#user_list.section
+
+  //- include ../templates/modal-user-info
+
+  #dropdownMenu(style='display:none')
+    .dropdown-menu
+      .dropdown-content
+        a.dropdown-item(class = isDark ? 'has-text-grey-light' : '') Unfriend
+        a.dropdown-item(class = isDark ? 'has-text-grey-light' : '') Block

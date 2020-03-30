@@ -1,0 +1,83 @@
+@import '../general/base';
+@import '../general/messpresso';
+@import '~bulma/sass/components/menu';
+@import '~bulma-badge/dist/css/bulma-badge';
+@import '~bulma-tooltip/dist/css/bulma-tooltip.min';
+
+html,
+body {
+  min-height: 100%
+}
+
+.body {
+  background: $white;
+  padding-left: 4rem;
+
+  &.dark {
+    background: $black2;
+
+    aside.menu {
+      background: $black;
+
+      a {
+
+        &.is-active,
+        &:hover {
+          background: $black2;
+
+          .icon {
+            color: $white !important
+          }
+        }
+      }
+    }
+  }
+}
+
+aside.menu {
+  background: linear-gradient(#34a0f4, #016eff);
+  height: 100%;
+  left: 0;
+  position: fixed;
+  text-align: center;
+  top: 0;
+  width: 4rem;
+  z-index: 999;
+
+  .menu-list {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    li:not(:only-child):last-child {
+      margin-top: auto;
+    }
+  }
+
+  a:hover {
+    background: $blue3;
+  }
+
+  .image {
+    margin: auto
+  }
+}
+
+.tooltip::before {
+  text-transform: capitalize
+}
+
+.is-tooltip-blue4 {
+  &::before {
+    background: $blue4 !important;
+    color: $black2 !important;
+  }
+
+  &::after {
+    border-right-color: $blue4 !important;
+  }
+}
+
+[data-badge].has-badge-bottom::after {
+  right: .7em
+}

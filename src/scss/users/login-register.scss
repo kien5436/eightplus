@@ -1,0 +1,59 @@
+@import '../general/base';
+@import '~bulma/sass/elements/box';
+@import '~bulma/sass/elements/button';
+@import '~bulma/sass/elements/title';
+@import '~bulma/sass/form/shared';
+@import '~bulma/sass/form/tools';
+@import '~bulma/sass/form/checkbox-radio';
+@import '~bulma/sass/form/input-textarea';
+@import '~bulma/sass/layout/hero';
+
+:global {
+  @import '~datepickerx/dist/css/DatePickerX.min';
+}
+
+.hero-body {
+  background: $black;
+  flex-direction: column;
+  justify-content: center;
+}
+
+canvas {
+  position: absolute;
+  z-index: 1;
+}
+
+.box {
+  background: $black2 !important;
+  position: relative;
+  z-index: 2;
+
+  input {
+    background: transparent;
+
+    &:focus {
+      border: none;
+      box-shadow: 0 0 0 0.125em rgba($white, .7);
+    }
+  }
+
+  hr {
+    height: 1px;
+  }
+}
+
+.logo {
+  background: url(../../others/m-dark.png) center / contain no-repeat;
+  height: 7rem;
+  text-align: center;
+}
+
+::placeholder {
+  color: $white !important
+}
+
+.menu li {
+  cursor: pointer;
+  display: inline-block;
+  padding: 0 .5em;
+}

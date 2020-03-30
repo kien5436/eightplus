@@ -1,0 +1,27 @@
+.plyr {
+  &--audio &__controls {
+    background: transparent;
+    padding: 3px;
+  }
+
+  &--video &__volume {
+    flex: none;
+
+    input[type=range] {
+      left: -.5rem;
+      position: absolute;
+      top: -2rem;
+      transform: rotate(-90deg);
+    }
+  }
+
+  &__control:hover,
+  &__control.plyr__tab-focus {
+    background: none !important;
+    color: inherit !important;
+  }
+
+  &__control.plyr__tab-focus {
+    box-shadow: unset
+  }
+}

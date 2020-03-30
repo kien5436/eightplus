@@ -1,0 +1,110 @@
+@import '../general/base';
+@import '../general/messpresso';
+@import '~bulma/sass/layout/section';
+@import '~bulma/sass/grid/columns';
+@import '~bulma/sass/components/tabs';
+@import '~bulma/sass/components/dropdown';
+@import '~bulma/sass/elements/button';
+@import '~bulma/sass/elements/icon';
+@import '~bulma/sass/elements/title';
+@import '~bulma/sass/elements/image';
+@import '~bulma/sass/elements/box';
+@import '~bulma/sass/form/shared';
+@import '~bulma/sass/form/tools';
+@import '~bulma/sass/form/input-textarea';
+@import 'navbar-home';
+@import '../general/scrollbar';
+@import '../general/modal-user-info';
+
+.section {
+  &:first-of-type {
+    background: $white;
+    left: 0;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  padding: 1.5rem 3rem;
+
+  &+& {
+    padding-top: 0
+  }
+}
+
+#searchEverything {
+  .control:first-child {
+    flex: 1 0 0
+  }
+
+  .input {
+    border: none;
+    transition: .3s;
+
+    &:focus {
+      box-shadow: 0 5px 7px 2px $grey-light;
+    }
+
+    &::placeholder {
+      color: rgba($black3, .3) !important
+    }
+  }
+}
+
+.tabs {
+  &.is-centered.is-small {
+    margin: 1.5em 0 1em;
+  }
+
+  li.is-active a {
+    border-bottom-color: currentColor;
+  }
+}
+
+.user {
+  margin-top: 0;
+  padding: 0 1rem;
+
+  .is-2-line {
+    max-height: $title-line-height * 2rem;
+    overflow: hidden;
+  }
+
+  .subtitle {
+    margin-bottom: .75em
+  }
+}
+
+body.dark {
+  .section:first-of-type {
+    background: $black2
+  }
+
+  #searchEverything .input {
+    background: $black3;
+    color: $white;
+
+    &:focus {
+      box-shadow: 0 5px 7px 2px $black;
+    }
+
+    &::placeholder {
+      color: $white
+    }
+  }
+
+  .user {
+    background: $black3
+  }
+
+  .dropdown {
+    &-content {
+      background: $black3
+    }
+
+    &-item:hover {
+      background: $grey-darker;
+      color: $white !important;
+    }
+  }
+}
