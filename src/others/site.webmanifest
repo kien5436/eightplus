@@ -1,6 +1,6 @@
 {
-    "name": "",
-    "short_name": "",
+    "name": "Messpresso",
+    "short_name": "Messpresso",
     "icons": [
         {
             "src": "/android-chrome-192x192.png",
@@ -8,12 +8,13 @@
             "type": "image/png"
         },
         {
-            "src": "/android-chrome-256x256.png",
-            "sizes": "256x256",
+            "src": "/android-chrome-384x384.png",
+            "sizes": "384x384",
             "type": "image/png"
         }
     ],
     "theme_color": "#ffffff",
     "background_color": "#ffffff",
+    "start_url": "https://messpresso.com",
     "display": "standalone"
 }

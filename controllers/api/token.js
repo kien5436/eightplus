@@ -67,6 +67,11 @@ const roles = {
 };
 const ACCESS_TOKEN = 1;
 const REFRESH_TOKEN = 0;
+const MARK_LOGGED_IN_TOKEN = 2;
+
+exports.ACCESS_TOKEN = ACCESS_TOKEN;
+exports.REFRESH_TOKEN = REFRESH_TOKEN;
+exports.MARK_LOGGED_IN_TOKEN = MARK_LOGGED_IN_TOKEN;
 
 exports.invalidate = (token) => {
 
@@ -142,11 +147,12 @@ exports.refresh = (req, res, next) => {
 };
 
 /**
- * @returns {<String>} access token
+ * @param { Number } type[1: access token, 0: refresh token]
+ * @returns { <String>} access token
  */
-exports.create = (user) => {
+exports.create = (user, type = ACCESS_TOKEN) => {
 
-  const token = createToken(user, ACCESS_TOKEN);
+  const token = createToken(user, type);
   // const refreshToken = createToken(user, REFRESH_TOKEN);
   // const payload = jwt.decode(token);
 
@@ -169,22 +175,30 @@ exports.create = (user) => {
  */
 function createToken(user, type) {
 
-  const secret = (type === 0) ? process.env.JWT_REFRESH_SECRET : process.env.JWT_SECRET;
+  const secret = (type === REFRESH_TOKEN) ? process.env.JWT_REFRESH_SECRET : process.env.JWT_SECRET;
   const payload = { uid: user._id, iss: user.iss, jti: new Types.ObjectId() };
   const options = {};
 
-  if (type !== REFRESH_TOKEN) {
-
-    switch (user.role) {
-      case 'admin':
-        payload.scopes = roles.admin;
-        break;
-      case 'user':
-        payload.scopes = roles.user;
-        break;
-    }
-
-    options.expiresIn = '1y';
+  switch (type) {
+    case ACCESS_TOKEN:
+      switch (user.role) {
+        case 'admin':
+          payload.scopes = roles.admin;
+          break;
+        case 'user':
+        default:
+          payload.scopes = roles.user;
+          break;
+      }
+      options.expiresIn = '1y';
+      break;
+    case MARK_LOGGED_IN_TOKEN:
+      payload.isAuthenticated = true;
+      options.expiresIn = process.env.COOKIE_MAXAGE;
+      break;
+    case REFRESH_TOKEN:
+    default:
+      break;
   }
 
   return jwt.sign(payload, secret, options);

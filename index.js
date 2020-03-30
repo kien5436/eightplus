@@ -1,8 +1,8 @@
-if (process.env.NODE_ENV !== 'production') dotenv = require('dotenv').config();
+if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 const express = require('express');
 const app = express();
 const morgan = require('morgan');
-const session = require('express-session');
+// const session = require('express-session');
 const { connect, set } = require('mongoose');
 
 const server = require('./controllers/socket')(app);
@@ -27,7 +27,7 @@ if (process.env.NODE_ENV !== 'production') {
     publicPath: config.output.publicPath,
     clientLogLevel: 'silent',
     serverSideRender: true,
-    stats: 'errors-warnings',
+    stats: 'normal',
     writeToDisk: false
   }));
 }
@@ -36,15 +36,15 @@ app.set('view engine', 'pug');
 app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(session({
-  secret: process.env.SS_SECRET,
-  resave: false,
-  saveUninitialized: true,
-  cookie: {
-    secure: process.env.COOKIE_SECURE,
-    maxAge: parseInt(process.env.SS_MAXAGE)
-  }
-}));
+// app.use(session({
+//   secret: process.env.SS_SECRET,
+//   resave: false,
+//   saveUninitialized: true,
+//   cookie: {
+//     secure: process.env.COOKIE_SECURE,
+//     maxAge: parseInt(process.env.SS_MAXAGE)
+//   }
+// }));
 
 app.use('/assets', express.static('assets', { maxAge: process.env.COOKIE_MAXAGE }));
 app.use('/files', express.static('uploads', { maxAge: process.env.COOKIE_MAXAGE }));

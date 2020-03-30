@@ -1,8 +1,8 @@
 import '../../scss/users/chat.scss';
 import Rte from './rte';
-import debounce from '../general/debounce';
+import debounce from '../helpers/debounce';
 
-import Plyr from '../../libs/plyr/plyr.min';
+import Plyr from 'plyr/dist/plyr';
 
 Plyr.setup('.player', {
   seekTime: 5,

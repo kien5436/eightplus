@@ -5,10 +5,7 @@ const error = require('../helpers/error');
 const { validateOnSave, validateOnUpdate } = require('../helpers/validate/user');
 
 const userSchema = new Schema({
-  aliasId: {
-    index: { unique: true, type: 'text' },
-    type: String,
-  },
+  aliasId: String,
   avatar: {
     type: Map,
     of: String,
@@ -16,16 +13,15 @@ const userSchema = new Schema({
   },
   dob: Number,
   email: {
-    index: { unique: true, type: 'text' },
-    type: String,
+    trim: true,
+    type: String
   },
   phone: {
-    index: { unique: true, type: 'text' },
     trim: true,
     type: String,
   },
   name: {
-    index: { unique: true, type: 'text' },
+    trim: true,
     type: String,
   },
   sex: String,
@@ -75,14 +71,14 @@ userSchema.pre('save', async function(next) {
     if (!markError.email && 'email' in user) {
 
       const id = await this.constructor.findOne({ $or: [{ email: this.email }, { phone: this.email }] }).select('_id').lean();
-      if (null !== id) errors.push({
+      if (null !== id) errors.email = {
         field: 'email',
         value: this.email,
         message: 'user existed'
-      });
+      };
     }
 
-    if (errors.length > 0) throw error('', { status: 400, errors });
+    if (Object.keys(errors).length > 0) throw error('', { status: 400, errors });
 
     if (null !== this.$locals.password) {
 
@@ -119,21 +115,21 @@ userSchema.pre(/^update/, async function(next) {
     if (!markError.email && 'email' in user) {
 
       id = await this.model.findOne({ $or: [{ email: user.email }, { phone: user.email }] }).select('_id').lean();
-      if (null !== id) errors.push({
+      if (null !== id) errors.email = {
         field: 'email',
         value: user.email,
         message: 'user existed'
-      });
+      };
     }
 
     if (!markError.aliasId && 'aliasId' in user) {
 
       id = await this.model.findOne({ aliasId: user.aliasId }).select('_id').lean();
-      if (null !== id) errors.push({
+      if (null !== id) errors.id = {
         field: 'id',
         value: user.aliasId,
         message: 'id existed'
-      });
+      };
     }
 
     // validate password is correct or not
@@ -148,7 +144,7 @@ userSchema.pre(/^update/, async function(next) {
     //   });
     // }
 
-    if (errors.length > 0) throw error('', { status: 400, errors });
+    if (Object.keys(errors).length > 0) throw error('', { status: 400, errors });
 
     if (/^(\+[0-9]{1,4}|0)[0-9]{9,10}$/.test(user.email)) {
 
@@ -187,5 +183,15 @@ userSchema.pre(/^update/, async function(next) {
   }
   catch (err) { next(err) }
 });
+
+userSchema.index({ aliasId: 'text', name: 'text' }, {
+  name: 'aliasId_name',
+  weights: {
+    aliasId: 8,
+    name: 10,
+  }
+});
+userSchema.index({ email: 1 }, { partialFilterExpression: { email: { $exists: true } } });
+userSchema.index({ phone: 1 }, { partialFilterExpression: { phone: { $exists: true } } });
 
 module.exports = model('User', userSchema);

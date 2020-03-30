@@ -14,7 +14,7 @@ const rootUrl = `${process.env.HOST}:${process.env.PORT}/files`;
 exports.loadProfile = async (req, res, next) => {
 
   const activeRoute = 'profile';
-  const assets = extractAssets(res, 'profile', 'login-register~profile');
+  const assets = extractAssets(res, 'profile', 'home~login-register~profile');
   const currentUser = req.user;
   const locale = req.cookies.locale || 'en';
   const dict = i18n(locale, 'profile', 'aside');
@@ -68,7 +68,7 @@ exports.logout = (req, res, next) => {
 exports.loadViewLogin = (req, res, next) => {
 
   const isRegister = req.originalUrl === '/register';
-  const assets = extractAssets(res, 'login-register', 'login-register~profile');
+  const assets = extractAssets(res, 'login-register', 'home~login-register~profile', 'vendors~login-register', 'vendors~login-register~profile');
   const locale = req.cookies.locale || 'en';
   const dict = i18n(locale, isRegister ? 'register' : 'login');
 
@@ -96,10 +96,11 @@ async function login(req, res, next) {
 
       if (hashedPassword === user.password) {
 
-        user.iss = req.protocol + '://' + req.hostname;
+        user.iss = req.protocol + '://' + req.hostname.protocol + '://' + req.hostname;
 
         const token = Token.create(user);
         const referer = req.signedCookies['referer'] || '/';
+        res.cookie('dark_mode', 'true' === user.metaData.darkMode);
         res.cookie('locale', user.metaData.locale);
         res.cookie('uid', user._id.toString());
         res.cookie('token', token, { signed: 1, httpOnly: 1 });
@@ -151,6 +152,7 @@ async function register(req, res, next) {
 
     const token = Token.create(newUser);
 
+    res.cookie('dark_mode', false);
     res.cookie('locale', 'en');
     res.cookie('uid', newUser.id);
     res.cookie('token', token, { signed: 1, httpOnly: 1 });

@@ -1,11 +1,13 @@
+import debounce from './debounce';
+
 /**
  * Observe an element and load more content when scroll up or down
  * @param {string|object} scroller HTMLElement or selector
  * @param {string} direction 'down', 'up'
  * @param {number} offset the number between 0 and 1 represents the percentage offset before the next load
- * @param {number} callback function loads data
+ * @param {Function} callback function loads data
  */
-export function scrollLoader({
+export default function scrollLoader({
   scroller = window,
   direction = 'down',
   offset = 0,
@@ -28,7 +30,9 @@ function windowScroll(direction, offset, callback) {
 
   let lastScrollTop = pageYOffset || document.documentElement.scrollTop;
 
-  window.addEventListener('scroll', function() {
+  window.addEventListener('scroll', debounce(_scroll, 350), false);
+
+  function _scroll() {
 
     const scrollTop = pageYOffset || document.documentElement.scrollTop;
     const st = scrollTop / document.body.scrollHeight;
@@ -47,30 +51,30 @@ function windowScroll(direction, offset, callback) {
     }
 
     lastScrollTop = scrollTop;
-  }, false);
+  }
 }
 
 function elemScroll(scroller, direction, offset, callback) {
 
   let lastScrollTop = scroller.scrollTop;
 
-  scroller.addEventListener('scroll', function() {
+  scroller.addEventListener('scroll', debounce(_scroll, 350), false);
+
+  function _scroll() {
 
     const scrollTop = this.scrollTop / this.scrollHeight;
 
     switch (direction) {
       case 'down':
-        if (this.scrollTop > lastScrollTop && scrollTop + .1 - offset >= 0) {
+        if (this.scrollTop > lastScrollTop && scrollTop + .1 - offset >= 0)
           callback();
-        }
         break;
       case 'up':
-        if (this.scrollTop < lastScrollTop && scrollTop + .1 - offset <= 0) {
+        if (this.scrollTop < lastScrollTop && scrollTop + .1 - offset <= 0)
           callback();
-        }
         break;
     }
 
     lastScrollTop = this.scrollTop;
-  }, false);
+  }
 }

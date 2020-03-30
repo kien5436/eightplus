@@ -1,12 +1,12 @@
-import '../general/favicon';
+import '../helpers/favicon';
 import '../../scss/users/login-register.scss';
-import i18n from '../../../helpers/i18n/client';
-import Validation from '../general/validation';
-import ajax from '../general/ajax';
-import { getCookie } from '../general/cookie';
+import { getCookie } from '../helpers/cookie';
+import ajax from '../helpers/ajax';
+import i18n from 'i18n';
+import Validation from '../helpers/validation';
 
-import '../../libs/particles.js/particles';
-import '../../libs/datepickerx/DatePickerX.min';
+import 'particles.js';
+import 'datepickerx/dist/js/DatePickerX.min'
 
 const API_VERSION = 'v1';
 const validation = new Validation();
@@ -89,6 +89,7 @@ window.addEventListener('load', () => {
   const strictAge = new Date(Date.now()).getFullYear() - 10;
 
   validation.errors = i18n(locale, 'error');
+  console.info(validation.errors)
 
   if (null !== datePicker) {
 

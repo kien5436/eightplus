@@ -19,8 +19,9 @@ html(lang='en')
     each path in css
       link(rel='stylesheet' href=path)
 
-  - const isDark = true
-  body(class = isDark ? 'dark' : '')
+  - const isDark = currentUser && 'true' === currentUser.darkMode
+
+  body(class=(isDark ? 'dark' : ''))
     noscript This page requires JavaScript to display
     block content
     block js

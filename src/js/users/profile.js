@@ -1,13 +1,14 @@
-import '../general/favicon';
+import '../helpers/favicon';
 import '../../scss/users/profile.scss';
-import modal from '../general/modal';
-import ajax from '../general/ajax';
-import { getCookie } from '../general/cookie';
-import debounce from '../general/debounce';
-import i18n from '../../../helpers/i18n/client';
-import Validation from '../general/validation';
+import modal from '../helpers/modal';
+import ajax from '../helpers/ajax';
+import { getCookie } from '../helpers/cookie';
+import debounce from '../helpers/debounce';
+import i18n from 'i18n';
+import Validation from '../helpers/validation';
+import { createElement } from '../helpers/dom';
 
-import '../../libs/datepickerx/DatePickerX.min';
+import 'datepickerx/dist/js/DatePickerX.min'
 
 const API_VERSION = 'v1';
 const uid = getCookie('uid');

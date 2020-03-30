@@ -19,26 +19,6 @@ router
     next();
   })
   .use('/api/v1', api)
-  .use('/', web)
-  .use((req, res, next) => { next(error('Not found', { status: 404 })); })
-  .use((err, req, res, next) => {
-    // console.log(err);
-
-    if (res.headersSent) return;
-
-    const serverErr = ['MongoError', 'CastError'];
-    let error = {};
-
-    if (err.hasOwnProperty('errors')) {
-
-      error = err.errors;
-    }
-    else error.message = !serverErr.includes(err.name) ? err.message : 'Internal server error';
-
-    res.status(err.status || 500).json({
-      ok: false,
-      error
-    });
-  });
+  .use('*', web);
 
 module.exports = router;

@@ -129,6 +129,27 @@ const checkUpdate = validator.compile({
     }
   },
 });
+const checkLogin = validator.compile({
+  email: {
+    empty: false,
+    type: 'string',
+    trim: true,
+    messages: {
+      stringEmpty: 'empty email',
+    }
+  },
+  password: {
+    empty: false,
+    min: 6,
+    type: 'string',
+    messages: {
+      stringEmpty: 'empty password',
+      stringMin: 'invalid password'
+    }
+  },
+});
+
+exports.validateOnLogin = (user) => validate(user, 'login');
 
 exports.validateOnSave = (user) => validate(user, 'save');
 
@@ -136,8 +157,22 @@ exports.validateOnUpdate = (user) => validate(user, 'update', { email: false, al
 
 function validate(user, action, markError = { email: false }) {
 
-  const retErrors = [];
-  const errors = 'save' === action ? checkSave(user) : checkUpdate(user);
+  const retErrors = {};
+  let errors = null;
+
+  switch (action) {
+    case 'save':
+      errors = checkSave(user);
+      break;
+    case 'update':
+      errors = checkUpdate(user);
+      break;
+    case 'login':
+      errors = checkLogin(user);
+      break;
+    default:
+      break;
+  }
 
   if (Array.isArray(errors)) {
 
@@ -145,24 +180,24 @@ function validate(user, action, markError = { email: false }) {
 
       const error = errors[i];
 
-      if ('email' in markError && 'email' in error) markError.email = true;
-      if ('aliasId' in markError && 'aliasId' in error) markError.aliasId = true;
+      if ('email' in markError && 'email' === error.field) markError.email = true;
+      if ('aliasId' in markError && 'aliasId' === error.field) markError.aliasId = true;
 
       error.value = user[error.field];
       delete error.actual;
       delete error.expected;
       delete error.type;
-      retErrors.push(error);
+      retErrors[error.field] = error;
     }
   }
 
   if (!markError.email && 'email' in user && !isEmail(user.email) && !isPhone(user.email)) {
 
-    retErrors.push({
+    retErrors.email = {
       field: 'email',
       value: user.email,
       message: 'invalid email',
-    });
+    };
     markError.email = true;
   }
 

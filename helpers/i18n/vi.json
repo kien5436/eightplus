@@ -1,53 +1,141 @@
 {
-	"reset": {
-		"title": "Đổi mật khẩu",
-		"guidelineEnter": "Nhập email cùa bạn và chúng tôi sẽ gửi liên kết để đổi mật khẩu",
-		"guidelineResend": "Kiểm tra email và làm theo liên kết được gửi tới để đổi mật khẩu.<br>Nếu bạn không tìm thấy email của chúng tôi, vui lòng gửi lại yêu cầu khác sau 5 phút.",
-		"submitTextReset": "Thay đổi",
-		"submitTextSend": "Gửi email",
-		"submitTextResend": "Gửi lại",
-		"phPassword": "Mật khẩu mới",
-		"phPasswordConfirm": "Xác nhận mật khẩu mới"
-	},
-	"login": {
-		"title": "Đăng nhập",
-		"phPassword": "Mật khẩu",
-		"forgotText": "Quên mật khẩu?",
-		"submitText": "Để tôi vào",
-		"registerText": "Đăng kí"
-	},
-	"register": {
-		"title": "Đăng kí",
-		"phEmail": "Email",
-		"phUsername": "Tên hiển thị",
-		"submitText": "Đăng kí",
-		"loginText": "Đăng nhập"
-	},
-	"chat": {
-		"phEditor": "Viết tin nhắn...",
-		"phSearch": "Tìm ai đó",
-		"titleEmoji": "Chọn nhãn dán",
-		"titleSend": "Gừi tin nhắn",
-		"statusOn": "Đang hoạt dông",
-		"statusOff": "Không hoạt động",
-		"contactTitle": "Ai đang hoạt động",
-		"logout": "Đăng xuất",
-		"changeBg": "Đổi màu nền",
-		"changeLang": "Đổi ngôn ngữ",
-		"titleAttach": "Thêm tập tin",
-		"hall": "Đại sảnh"
-	},
-	"error": {
-		"existedUser": "Email này đã tồn tại!",
-		"unexistedUser": "Tài khoản này không tồn tại",
-		"password unmatch": "Mật khẩu không đúng",
-		"empty message": "Hãy nhập tin nhắn",
-		"empty email": "Vui lòng nhập email",
-		"empty username": "Vui lòng nhập tên hiển thị",
-		"empty password": "Vui lòng nhập mật khẩu",
-		"invalid email": "Vui lòng nhập email thật",
-		"invalid password": "Mật khẩu phải dài hơn 6 kí tự",
-		"not same password": "Xác nhận mật khẩu không khớp",
-		"session expired": "Liên kết này đã hết hạn. <a href='/reset'>Gửi một liên kết khác</a>"
-	}
+  "404": {
+    "content": "Page not found",
+    "title": "Page not found"
+  },
+  "aside": {
+    "contacts": "contacts",
+    "home": "home",
+    "message": "message",
+    "profile": "profile",
+    "settings": "settings"
+  },
+  "chat": {
+    "tooltipNewMsg": "New conversation",
+    "phFindPerson": "Find people and groups",
+    "txtAll": "All",
+    "txtUnread": "Unread",
+    "txtRequests": "Requests",
+    "txtStatusOn": "Active now",
+    "tooltipVoice": "Voice call",
+    "tooltipVideo": "Video call",
+    "tooltipOptions": "Options",
+    "tooltipReply": "Reply",
+    "tooltipForward": "Forward",
+    "tooltipMore": "More",
+    "phEditor": "Type a message...",
+    "tooltipEmoji": "Select an emoji",
+    "tooltipSend": "Send message",
+    "txtStatusOff": "Offline",
+    "logout": "Logout",
+    "changeBg": "Change background",
+    "changeLang": "Change language",
+    "tooltipAttach": "Add files",
+    "menuLabelOptions": "Options",
+    "menuLabelFiles": "Files",
+    "menuLabelPhotos": "Photos and Videos",
+    "optLabelSearch": "Search in conversation",
+    "optLabelChangeName": "Change conversation name",
+    "optLabelNoti": "Notifications",
+    "optLabelBlock": "Block",
+    "optLabelChangeColor": "Change color",
+    "optLabelChangeEmoji": "Change emoji"
+  },
+  "error": {
+    "404": "Page not found",
+    "empty dob": "Provide your birthday",
+    "empty id": "Id cannot empty",
+    "empty email": "This field is required",
+    "empty message": "Enter some messages",
+    "empty name": "What's your name?",
+    "empty password": "Provide a password",
+    "user existed": "This account has already existed!",
+    "id existed": "This id has already existed!",
+    "invalid length": "Valid length is from ... to ...",
+    "invalid online status": "Invalid online status",
+    "invalid id": "The ID can contain alphanum",
+    "invalid dob": "This is invalid date. You must be greater than 10 years old",
+    "invalid email": "This seems not an email or phone",
+    "invalid password": "Password must be greater than 6 characters",
+    "invalid sex": "Provide your sex",
+    "not same password": "Password confirmation doesn't match password",
+    "password unmatch": "Incorrect password",
+    "session expired": "Your session has been expired. <a href='/reset'>Resend another link</a>",
+    "user unexisted": "This account does not exists",
+    "permission denied": "You don't have permission to do this action"
+  },
+  "home": {
+    "title": "Messpresso"
+  },
+  "login": {
+    "askAccount": "Don't have an account yet? ",
+    "forgotText": "Forgot password?",
+    "phEmail": "Email or phone",
+    "phPassword": "Password",
+    "referText": "Register",
+    "submitText": "Login",
+    "title": "Login"
+  },
+  "profile": {
+    "addNewContact": "Add new contact",
+    "btnCancel": "Cancel",
+    "btnDeactive": "Deactivate account",
+    "btnDeleteAcc": "Delete account",
+    "btnSave": "Save",
+    "btnSaveAll": "Save changes",
+    "currentPass": "Current password",
+    "edit": "Edit",
+    "fieldDob": "Date of birth",
+    "fieldEmail": "Email",
+    "fieldId": "ID",
+    "fieldPass": "Password",
+    "fieldPhone": "Phone",
+    "fieldSex": "Sex",
+    "headInfo": "Infomations",
+    "newPass": "New password",
+    "notProvided": "Not provided",
+    "otherContacts": "Other contacts",
+    "select": {
+      "sex": {
+        "female": "female",
+        "male": "male",
+        "other": "other"
+      },
+      "hide": {
+        "hide": "hide",
+        "show": "show"
+      }
+    },
+    "showOnlineStatus": "Show online status",
+    "updateAvatar": "Update"
+  },
+  "register": {
+    "askAccount": "Already have an account? ",
+    "phDob": "Date of birth",
+    "phEmail": "Email or phone",
+    "phName": "Nickname",
+    "phPassword": "Password",
+    "referText": "Login",
+    "sex": {
+      "male": " Male",
+      "female": " Female",
+      "other": " Other"
+    },
+    "submitText": "Register",
+    "term": {
+      "1": "By clicking Register, you agree to our ",
+      "2": "terms and conditions."
+    },
+    "title": "Register"
+  },
+  "reset": {
+    "title": "Reset password",
+    "guidelineEnter": "Enter your email address and we will send you a link to reset your password",
+    "guidelineResend": "Check your email and follow the link was sent to reset your password.<br>If you can't find our email, please send another one after 5 minutes.",
+    "submitTextReset": "Reset",
+    "submitTextSend": "Send email",
+    "submitTextResend": "Send another email",
+    "phPassword": "New password",
+    "phPasswordConfirm": "Confirm new password"
+  }
 }

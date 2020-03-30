@@ -1,3 +1,5 @@
+@import '../general/base';
+@import '../general/messpresso';
 @import '~bulma/sass/components/menu';
 @import '~bulma-badge/dist/css/bulma-badge';
 @import '~bulma-tooltip/dist/css/bulma-tooltip.min';
@@ -7,7 +9,7 @@ body {
   min-height: 100%
 }
 
-body {
+.body {
   background: $white;
   padding-left: 4rem;
 

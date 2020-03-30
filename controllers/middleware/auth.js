@@ -9,7 +9,7 @@ module.exports = async (req, res, next) => {
     token = req.header('Authorization').split(' ')[1];
 
   try {
-    if (!token) throw error('No token provided', { status: 401 });
+    if (!token) throw error('no token provided', { status: 401 });
 
     req.user = await Token.isValid(token);
     next();

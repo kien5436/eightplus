@@ -9,3 +9,4 @@ uploads/sounds/*
 webpack/manifest.json
 ssl
 .vscode
+*.log

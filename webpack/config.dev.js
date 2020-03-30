@@ -1,27 +1,37 @@
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { resolve } = require('path');
 
 module.exports = {
   mode: 'development',
   entry: {
-    'login-register': './src/js/users/login-register.js',
-    home: './src/js/users/home.js',
-    chat: './src/js/users/chat.js',
-    // contacts: './src/js/users/contacts.js',
-    profile: './src/js/users/profile.js',
-    '404': './src/js/404.js',
+    index: './src/js/index.js',
   },
   output: {
-    filename: 'js/[contenthash:7].js',
+    filename: 'js/[contenthash:5].js',
     publicPath: '/assets/',
-    path: path.resolve('assets')
+    path: resolve('assets')
   },
   module: {
     rules: [{
+        test: /\.jsx?$/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env', '@babel/preset-react']
+          }
+        }
+      },
+      {
         test: /\.scss$/,
         use: [
           MiniCssExtractPlugin.loader,
-          'css-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              modules: { localIdentName: '[hash:5]' },
+              localsConvention: 'dashesOnly',
+            },
+          },
           'sass-loader'
         ]
       },
@@ -49,11 +59,18 @@ module.exports = {
     ]
   },
   plugins: [
-    new MiniCssExtractPlugin({ filename: 'css/[contenthash:7].css' }),
+    new MiniCssExtractPlugin({ filename: 'css/[contenthash:5].css' }),
   ],
   optimization: {
     splitChunks: {
       chunks: 'all'
     },
   },
+  resolve: {
+    extensions: ['.js', '.jsx', '.json', '.scss'],
+    alias: {
+      i18n: resolve('helpers/i18n/client'),
+      style: resolve('src/scss'),
+    }
+  }
 };

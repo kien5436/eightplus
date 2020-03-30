@@ -1,39 +1,32 @@
-import '../../scss/users/home.scss';
+import '../../scss/users/contacts.scss';
+import '../helpers/favicon';
+// import ajax from '../helpers/ajax';
+// import modal from '../helpers/modal';
+// import { getCookie } from '../helpers/cookie';
+// import i18n from 'i18n';
 
-import modal from '../general/modal';
+import React from 'react';
+import { render } from 'react-dom';
 
-const tabIds = document.querySelectorAll('[data-tab-id]');
-const containerIds = document.querySelectorAll('[data-container-id]');
+// const API_VERSION = 'v1';
+// const darkMode = getCookie('dark_mode');
+// const locale = getCookie('locale') || 'en';
 
-tabIds.forEach(tab => {
+// window.addEventListener('load', () => {
 
-  tab.addEventListener('click', function() {
+//   const userList = document.getElementById('user_list');
+//   const dict = i18n(locale, 'home');
 
-    for (let i = containerIds.length; --i >= 0;) {
+//   ajax({
+//       url: `/api/${API_VERSION}/user`,
+//       method: 'get',
+//     })
+//     .then(xhr => {
 
-      if (containerIds[i].getAttribute('data-container-id') === this.getAttribute('data-tab-id')) {
+//       const res = JSON.parse(xhr.response);
 
-        containerIds[i].classList.remove('is-hidden');
-        this.classList.add('is-active');
-        if (document.body.classList.contains('dark')) {
+//       render(<LikeButton/>, userList);
+//     })
+//     .catch(console.error);
 
-          this.querySelector('a').classList.add('has-text-danger');
-          this.querySelector('a').classList.remove('has-text-grey-light');
-        }
-      }
-      else {
-        containerIds[i].classList.add('is-hidden');
-        tabIds[i].classList.remove('is-active');
-        if (document.body.classList.contains('dark')) {
-
-          tabIds[i].querySelector('a').classList.remove('has-text-danger');
-          tabIds[i].querySelector('a').classList.add('has-text-grey-light');
-        }
-      }
-    }
-  }, false);
-});
-
-document.addEventListener('click', modal, false);
-// const dataModal = document.querySelectorAll('[data-modal]');
-// modal(dataModal);
+// }, false);

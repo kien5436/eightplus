@@ -1,4 +1,4 @@
-import ajax from '../general/ajax';
+import ajax from '../helpers/ajax';
 
 export default class Rte {
 

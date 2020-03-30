@@ -1,3 +1,9 @@
+/**
+ * @function debounce
+ * @param {Function} func debounced function
+ * @param {Number} wait time in ms
+ * @param {Boolean} immediate do the function immediately
+ */
 export default function(func, wait, immediate = false) {
 
   let timeout;

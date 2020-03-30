@@ -41,6 +41,15 @@
     "optLabelChangeColor": "Change color",
     "optLabelChangeEmoji": "Change emoji"
   },
+  "contacts": {
+    "searchBar": "Find people, groups,...",
+    "blocked": "Blocked",
+    "sentRequest": "Sent requests",
+    "requested": "Requested",
+    "friends": "Friends",
+    "btnSend": "Send message",
+    "endOfResults": "End of results"
+  },
   "error": {
     "404": "Page not found",
     "empty dob": "Provide your birthday",
@@ -62,10 +71,13 @@
     "password unmatch": "Incorrect password",
     "session expired": "Your session has been expired. <a href='/reset'>Resend another link</a>",
     "user unexisted": "This account does not exists",
-    "permission denied": "You don't have permission to do this action"
+    "permission denied": "You don't have permission to do this action",
+    "no token provided": "No token provided",
+    "bad request": "Bad request"
   },
   "home": {
-    "title": "Messpresso"
+    "title": "Messpresso",
+    "btnSend": "Send message"
   },
   "login": {
     "askAccount": "Don't have an account yet? ",
@@ -74,7 +86,11 @@
     "phPassword": "Password",
     "referText": "Register",
     "submitText": "Login",
-    "title": "Login"
+    "title": "Login",
+    "locale": {
+      "en": "English",
+      "vi": "Vietnamese"
+    }
   },
   "profile": {
     "addNewContact": "Add new contact",

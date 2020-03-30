@@ -2,7 +2,7 @@
  * @param {object} request {url, method, data, headers, ...}
  * @returns Promise<?>
  */
-export default function ajax(request) {
+export default function ajax(request = { url, method, data, headers }) {
 
   return new Promise((resolve, reject) => {
 
@@ -23,9 +23,20 @@ export default function ajax(request) {
 
 function standardizeRequest({ url, method = 'GET', data, headers = [], cors = false } = {}) {
 
+  method = method.toUpperCase();
+
   if (cors) {
+
     const proxy = 'https://cors-anywhere.herokuapp.com/';
     url = proxy + url;
+  }
+
+  if ('GET' === method) {
+
+    const query = (new URLSearchParams(data)).toString();
+
+    data = null;
+    url += '?' + query;
   }
 
   if (headers.length > 0) {
@@ -36,5 +47,5 @@ function standardizeRequest({ url, method = 'GET', data, headers = [], cors = fa
     }
   }
 
-  return { url, method: method.toUpperCase(), data, headers };
+  return { url, method, data, headers };
 }

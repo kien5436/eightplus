@@ -22,7 +22,8 @@
 */
 
 [class^="icon-"]:before,
-[class*=" icon-"]:before {
+[class*=" icon-"]:before,
+._icon:before {
   font-family: "messpresso";
   font-style: normal;
   font-weight: normal;

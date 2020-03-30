@@ -1,28 +1,8 @@
 extends ../templates/layout
 
-mixin tile(type)
-  .column.is-3-desktop.is-half-tablet
-    .user.columns.is-vcentered.is-variable.is-1.box
-      .column.is-4
-        figure.image.is-64x64(data-modal='modal-user-info')
-          img.is-rounded(src='https://placekitten.com/96')
-      .column
-        p.title.is-6.is-2-line(class = (isDark ? 'has-text-grey-lighter' : '') title='User has a very long name to appear here' data-modal='modal-user-info') User has a very long name to appear here
-        p.subtitle.is-7(class = isDark ? 'has-text-grey-light' : '') 4k members
-        a.button.is-small(role='button' class = isDark ? 'has-background-dark has-text-grey-lighter' : '')
-            span.icon
-              i.icon-mail
-            span send message
-        .dropdown
-          .dropdown-trigger
-            button.button.is-size-7(class = (isDark ? 'has-background-dark has-text-grey-lighter' : '') type='button' aria-haspopup="true" aria-controls="dropdown-menu")
-              span.icon.is-small
-                i.icon-cog
-
 block content
-
   html.is-clipped
-  body.full-screen-height.has-scrollbar
+  body(class=(isDark ? 'dark full-screen-height has-scrollbar' : 'full-screen-height has-scrollbar'))
 
   include ../templates/home-aside
 
@@ -36,25 +16,22 @@ block content
     datalist#peopleAndGroup
       - for (let i = 0; i < 10; i++)
         option(value=('something ' + i))
-    .tabs.is-centered.is-small
-      ul
-        li.is-active(data-tab-id='friends')
-          a(class = isDark ? 'has-text-danger' : '') Friends
-        li(data-tab-id='requested')
-          a(class = isDark ? 'has-text-grey-light' : '') Requested
-        li(data-tab-id='sentRequest')
-          a(class = isDark ? 'has-text-grey-light' : '') Sent requests
-        li(data-tab-id='blocked')
-          a(class = isDark ? 'has-text-grey-light' : '') Blocked
 
-  section.section
-    - const tabIds = ['friends', 'requested', 'sentRequest', 'blocked']
-    each tabId in tabIds
-      .columns.is-multiline(data-container-id=tabId class=(tabId !== 'friends' ? 'is-hidden' : ''))
-        - for (let i = 0; i < 16; i++)
-          +tile(tabId)
+    if 'home' !== activeRoute
+      .tabs.is-centered.is-small
+        ul
+          li.is-active(data-tab-id='friends')
+            a(class = isDark ? 'has-text-danger' : '') Friends
+          li(data-tab-id='requested')
+            a(class = isDark ? 'has-text-grey-light' : '') Requested
+          li(data-tab-id='sentRequest')
+            a(class = isDark ? 'has-text-grey-light' : '') Sent requests
+          li(data-tab-id='blocked')
+            a(class = isDark ? 'has-text-grey-light' : '') Blocked
 
-  include ../templates/modal-user-info
+  section#user_list.section
+
+  //- include ../templates/modal-user-info
 
   #dropdownMenu(style='display:none')
     .dropdown-menu
